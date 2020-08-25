@@ -5,7 +5,7 @@ from osgeo import gdalconst
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage import exposure
-from app.azure_connect import Azure_Upload
+
 
 class image_render:
     """
@@ -21,11 +21,12 @@ class image_render:
             # opening .tif file up to read it and extract bands
             ds = gdal.Open(fname)
             self.data = ds.ReadAsArray()
+            print(self.data)
         # opens a section of the file
         else:
             # TODO: have each section of the file open up for viewing
             self.data = self.tiff_read(fname,0, 600, 0, 600)
-            self.write_tiff(fname,0, 600, 0, 600)
+            #self.write_tiff(fname,0, 600, 0, 600)
         
         
     def tiff_read(self,fname: str, x1: int, x2: int, y1: int, y2: int, bands: list=[]) -> np.ndarray:
@@ -163,11 +164,11 @@ class image_render:
     
     def s2_to_rgb(self,rgb=[3,2,1]):
         r, g, b = rgb
-        nb, nx, ny = self.data.shape
+        nx, ny = self.data.shape
         img = np.zeros((nx, ny, 3), dtype = np.uint8)
-        img[:,:,0] =  self.contrast_enhance_band(self.data[r, :, :], percentile=(0.5, 99.5), gamma=0.7)
-        img[:,:,1] =  self.contrast_enhance_band(self.data[g, :, :], percentile=(0.5, 99.5), gamma=0.7)
-        img[:,:,2] =  self.contrast_enhance_band(self.data[b, :, :], percentile=(0.5, 99.5), gamma=0.7)
+        img[:,:,0] =  self.contrast_enhance_band(self.data[r, :], percentile=(0.5, 99.5), gamma=0.7)
+        img[:,:,1] =  self.contrast_enhance_band(self.data[g, :], percentile=(0.5, 99.5), gamma=0.7)
+        img[:,:,2] =  self.contrast_enhance_band(self.data[b, :], percentile=(0.5, 99.5), gamma=0.7)
         self.img = img
         return img
         
@@ -175,7 +176,7 @@ class image_render:
         if band_num is None:
             return False
         if (band_num < self.data.shape[0]):
-            self.img = self.contrast_enhance_band(self.data[band_num,:,:], percentile=(0.5,99.5),gamma=0.7)
+            self.img = self.contrast_enhance_band(self.data[band_num,:], percentile=(0.5,99.5),gamma=0.7)
             return self.img
         else: 
             # raise Exception("Band Selection is outside of range")
