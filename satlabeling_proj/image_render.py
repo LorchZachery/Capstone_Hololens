@@ -25,7 +25,7 @@ class image_render:
         else:
             # TODO: have each section of the file open up for viewing
             self.data = self.tiff_read(fname,0, 600, 0, 600)
-            self.write_tiff(fname,0, 600, 0, 600)
+            #self.write_tiff(fname,0, 600, 0, 600)
         
         
     def tiff_read(self,fname: str, x1: int, x2: int, y1: int, y2: int, bands: list=[]) -> np.ndarray:
