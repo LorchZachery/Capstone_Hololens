@@ -1,0 +1,39 @@
+************************************* Invoked: Thu Aug 27 10:33:10 2020
+[0] Arguments: Z:\home\jonathan\Downloads\TIPCIPV13_installer.exe
+[12] Operations sanity check succeeded.
+[3548] Connecting the dynamic page entered signal.
+[3552] Setting the widgets label text.
+[52285] Created warning message box "OverwriteTargetDirectory": "Warning", "You have selected an existing, non-empty directory for installation.\nNote that it will be completely wiped on uninstallation of this application.\nIt is not advisable to install into this directory as installation might fail.\nDo you want to continue?"
+[52286] Critical: QPixmap::fromWinHICON(), failed to GetIconInfo() (Invalid cursor handle.)
+[52290] Critical: QPixmap::fromWinHICON(), failed to GetIconInfo() (Invalid cursor handle.)
+[52293] Critical: QPixmap::fromWinHICON(), failed to GetIconInfo() (Invalid cursor handle.)
+[123644] Cannot determine available space on device. Volume descriptor: "\\\\?\\Volume{00000000-0000-0000-0000-000000000043}\\", Mount path: "C:\\". Continue silently.
+[132684] Cannot determine available space on device. Volume descriptor: "\\\\?\\Volume{00000000-0000-0000-0000-000000000043}\\", Mount path: "C:\\". Continue silently.
+[134997] backup  operation: Mkdir
+[134997] 	- arguments: C:/users/jonathan/My Documents/Capstone/Capstone_Hololens/TIPCIP_App
+[134997] Done
+[134999] perform  operation: Mkdir
+[134999] 	- arguments: C:/users/jonathan/My Documents/Capstone/Capstone_Hololens/TIPCIP_App
+[134999] Done
+[135000] Install size: 1 components
+[135012] backup com.vendor.product operation: Extract
+[135012] 	- arguments: installer://com.vendor.product/1.3.0-1data.7z, C:\users\jonathan\My Documents\Capstone\Capstone_Hololens\TIPCIP_App
+[135012] Done
+[135012] perform com.vendor.product operation: Extract
+[135012] 	- arguments: installer://com.vendor.product/1.3.0-1data.7z, C:\users\jonathan\My Documents\Capstone\Capstone_Hololens\TIPCIP_App
+[137682] Done
+[137682] backup com.vendor.product operation: CreateShortcut
+[137682] 	- arguments: C:\users\jonathan\My Documents\Capstone\Capstone_Hololens\TIPCIP_App/TIPCIP.exe, C:\users\jonathan\Desktop/TIPCIP.lnk
+[137682] Done
+[137683] perform com.vendor.product operation: CreateShortcut
+[137683] 	- arguments: C:\users\jonathan\My Documents\Capstone\Capstone_Hololens\TIPCIP_App/TIPCIP.exe, C:\users\jonathan\Desktop/TIPCIP.lnk
+[137730] Done
+[137732] backup com.vendor.product operation: License
+[137732] 	- arguments:
+[137732] Done
+[137732] perform com.vendor.product operation: License
+[137732] 	- arguments:
+[137739] Done
+[137766] Writing maintenance tool: "C:\\users\\jonathan\\My Documents\\Capstone\\Capstone_Hololens\\TIPCIP_App/maintenancetool.exe.new"
+[137839] Wrote permissions for maintenance tool.
+[138363] Maintenance tool restart: false.
