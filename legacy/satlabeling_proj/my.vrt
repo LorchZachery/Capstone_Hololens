@@ -1,0 +1,20 @@
+<VRTDataset rasterXSize="2064" rasterYSize="1544">
+  <VRTRasterBand dataType="UInt16" band="1">
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">../test_data/IMG_0111_2.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2064" RasterYSize="1544" DataType="UInt16" BlockXSize="2064" BlockYSize="100" />
+      <SrcRect xOff="0" yOff="0" xSize="2064" ySize="1544" />
+      <DstRect xOff="0" yOff="0" xSize="2064" ySize="1544" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="UInt16" band="2">
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">../test_data/IMG_0111_3.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2064" RasterYSize="1544" DataType="UInt16" BlockXSize="2064" BlockYSize="100" />
+      <SrcRect xOff="0" yOff="0" xSize="2064" ySize="1544" />
+      <DstRect xOff="0" yOff="0" xSize="2064" ySize="1544" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>
