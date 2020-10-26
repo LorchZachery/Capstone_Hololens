@@ -8,7 +8,7 @@ import pylab
 import os
 
 r_earth = 6378
-directory = '../test_data/'
+directory = '../data/'
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
