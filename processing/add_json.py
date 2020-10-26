@@ -14,7 +14,9 @@ def truncate(number, digits) -> float:
     return math.trunc(stepper * number) / stepper
 
 def getElevation(lat, long):
- 
+  '''
+  uses a free api to get the evelation of the lat and long given
+  '''
   url = "https://nationalmap.gov/epqs/pqs.php?x=" + long + "&y=" + lat + "&units=Meters&output=json"
   
   response = urllib.request.urlopen(url)
@@ -26,6 +28,11 @@ def getElevation(lat, long):
 
 
 def getGPS(img, elevation, lat, long, alt):
+    '''
+     this function does a lot of trig to get what gps cooridnate of each conor of the image
+     currently it is not as exact as needed. The issue could be do to no ground truth test flight
+     there is most likely a fudge factor that needs to be added in
+    '''
     yaw, _, _= img.dls_pose()
     im_w, im_h = img.image_size() 
     ar = im_h / im_w
@@ -136,7 +143,7 @@ def createJson(filename, bombCoors):
     
     print(json.dumps(data, indent=4, sort_keys=True))
     print()
-    meta_json = os.path.join('stacked', 'test_data.json')
+    meta_json = os.path.join('stacked', 'metadata.json')
     with open(meta_json) as json_file:
         curr_data = json.load(json_file)
         
