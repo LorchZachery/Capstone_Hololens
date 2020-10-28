@@ -163,7 +163,9 @@ def align(pair):
                 cc, warp_matrix = cv2.findTransformECC(grad1, grad2, warp_matrix, warp_mode, criteria, inputMask=None, gaussFiltSize=1)
             except TypeError:
                 cc, warp_matrix = cv2.findTransformECC(grad1, grad2, warp_matrix, warp_mode, criteria)
-            
+            except:
+                return -1
+                
             if show_debug_images:
                 print("Warp after alignment level {} is \n{}".format(level,warp_matrix))
 
@@ -239,6 +241,8 @@ def align_capture(capture, ref_index=1, warp_mode=cv2.MOTION_HOMOGRAPHY, max_ite
         # Single-threaded alternative
         for pair in alignment_pairs:
             mat = align(pair)
+            if mat == -1:
+                return -1, -1
             warp_matrices[mat['match_index']] = mat['warp_matrix']
             print("Finished aligning band {}".format(mat['match_index']))
 

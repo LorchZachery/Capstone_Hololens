@@ -71,7 +71,8 @@ def stackImages(FILE, imageNames, panelNames=None):
                                                             max_iterations = max_alignment_iterations,
                                                             warp_mode = warp_mode,
                                                             pyramid_levels = pyramid_levels)
-    
+    if warp_matrices == -1:
+        return -1
     print("Finished Aligning, warp matrices={}".format(warp_matrices))
     
     cropped_dimensions, edges = imageutils.find_crop_bounds(capture, warp_matrices, warp_mode=warp_mode)
@@ -124,6 +125,6 @@ def stackImages(FILE, imageNames, panelNames=None):
         outband.WriteArray(outdata)
         outband.FlushCache()
     outRaster = None
-
+    return 1
 
 

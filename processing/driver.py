@@ -11,7 +11,7 @@ baseURL = 'http://10.1.100.138'
 #where the bombs are
 bombsCoor = [(39.0338362,-104.8850707),(39.0337238,-104.8842394)]
 
-
+errorFiles = []
 def post_image(image):
     ''''
     post_image sends an image to the sever using the upload.php script
@@ -112,14 +112,22 @@ def driver():
                     image_wild = baseName + '*.tif'
                     imagePath = os.path.join('..','data')
                     imageNames = glob.glob(os.path.join(imagePath,image_wild))
-                    stack.stackImages(baseName, imageNames)
-                    
-                    #updating the metadata json
-                    update_metadata(baseName)
-                    
-                    #pushing the image and metadata
-                    post_metadata()
-                    post_image(baseName + 'stacked.tiff')
+                    successCode = stack.stackImages(baseName, imageNames)
+                    if successCode != -1:
+                        #updating the metadata json
+                        update_metadata(baseName)
+                        
+                        #pushing the image and metadata
+                        post_metadata()
+                        post_image(baseName + 'stacked.tiff')
+                        
+                        #deleting stacked image
+                        stacked = '/stacked/' + baseName + 'stacked.tiff'
+                        os.remove(stacked)
+                    else:
+                        #error handling
+                        print(baseName + ' skipped due to stacking errors')
+                        errorFiles.append(baseName)
                     
                     #deleting the bands
                     delete_images(image_wild)
@@ -128,6 +136,8 @@ def check_uploads(baseName):
     '''
     this function checks if the file is already stacked and on the server
     '''
+    if baseName in errorFiles:
+        return False
     stacked = baseName + 'stacked.tiff'
     url = baseURL + '/uploads/' + stacked
     r = requests.get(url, stream = True)
@@ -154,7 +164,7 @@ def update_metadata(baseName):
         print('metadata updated')
         with open(filename) as json_file:
             dir_json = json.load(json_file)
-        print(json.dumps(dir_json, indent = 4))
+        #print(json.dumps(dir_json, indent = 4))
         os.rename(filename, 'stacked/' + filename)
     else:
         print('metadata update failed')
@@ -185,6 +195,9 @@ def delete_images(image_wild):
     for file in files:
         os.remove(file)
     print("bands delted")
+    
+    
+    
    
 if __name__ == '__main__':
      get_direcetory()
