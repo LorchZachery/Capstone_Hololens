@@ -122,7 +122,7 @@ def driver():
                         post_image(baseName + 'stacked.tiff')
                         
                         #deleting stacked image
-                        stacked = '/stacked/' + baseName + 'stacked.tiff'
+                        stacked = '../processing/stacked/' + baseName + 'stacked.tiff'
                         os.remove(stacked)
                     else:
                         #error handling
