@@ -64,7 +64,7 @@ def stackImages(FILE, imageNames, panelNames=None):
     pyramid_levels = 0 # for images with RigRelatives, setting this to 0 or 1 may improve alignment
     
     
-    print("Alinging images. Depending on settings this can take from a few seconds to many minutes")
+    print("Aligning images. Depending on settings this can take from a few seconds to many minutes")
     # Can potentially increase max_iterations for better results, but longer runtimes
     warp_matrices, alignment_pairs = imageutils.align_capture(capture,
                                                             ref_index = match_index,

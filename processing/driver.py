@@ -4,6 +4,8 @@ import shutil
 import json
 import add_json as data
 import stack_images as stack
+from getmac import get_mac_address as gma
+
 
 #baseURL to server
 baseURL = 'http://10.1.100.138'
@@ -98,8 +100,12 @@ def driver():
                 #baseName is the file name without its band number
                 baseName = file.split('_')[0] + '_' + file.split('_')[1] + '_'
                 
+                update_errorFiles()
                 # checking if the file has already been stacked
                 if check_uploads(baseName):
+                    
+                    #post current working file
+                    post_current_file(baseName)
                     #getting each band for the image
                     for band in range(1,7):
                         image = baseName + str(band) + '.tif'
@@ -114,11 +120,12 @@ def driver():
                     imageNames = glob.glob(os.path.join(imagePath,image_wild))
                     successCode = stack.stackImages(baseName, imageNames)
                     if successCode != -1:
+                    
+                        
                         #updating the metadata json
                         update_metadata(baseName)
                         
-                        #update errorFiles.txt
-                        update_errorFiles()
+                        
                         
                         #pushing the image and metadata
                         post_metadata()
@@ -140,6 +147,10 @@ def check_uploads(baseName):
     '''
     this function checks if the file is already stacked and on the server
     '''
+    running = parse_current_files()
+    if baseName in running:
+        return False
+    
     with open('errorFiles.txt') as f:
         if baseName in f.read():
             return False
@@ -203,7 +214,7 @@ def update_errorFiles():
         with open(filename, "wb") as f:
             shutil.copyfileobj(r.raw,f)
         
-        print('errorFiles updated')
+        #print('errorFiles updated')
         os.rename(filename,  filename)
     else:
         print('errorFiles update failed')
@@ -212,7 +223,7 @@ def post_errorFiles(baseName):
     '''
     adds failed file to errorFiles.txt and uploads to server
     '''
-    file = open("errorFiles.txt","w")
+    file = open("errorFiles.txt","a")
     file.write(baseName)
     file.write("\n")
     file.close()
@@ -225,8 +236,25 @@ def post_errorFiles(baseName):
     print(r.status_code)
     return
     
+def post_current_file(baseName):
     
+    url = baseURL + '/scripts/info.php'
+    data = {'type' : 1, 'imageName' : baseName, 'MAC' : gma()}
+    r = requests.post(url, data =data)
     
+def parse_current_files():
+
+    url = baseURL + '/scripts/info.php'
+    data = {'type': 2}
+    r = requests.post(url, data = data)
+    
+    b = r.content.decode().split(" ")
+    for entry in b:
+        if entry is '':
+            b.remove(entry)
+    print("current files being worked on:")
+    print(b)
+    return b
 def delete_images(image_wild):
     '''
     deletes images in the wild card set
@@ -234,7 +262,7 @@ def delete_images(image_wild):
     files = glob.glob('../data/' + image_wild)
     for file in files:
         os.remove(file)
-    print("bands delted")
+    print("bands deleted")
     
     
     
