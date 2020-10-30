@@ -117,6 +117,9 @@ def driver():
                         #updating the metadata json
                         update_metadata(baseName)
                         
+                        #update errorFiles.txt
+                        update_errorFiles()
+                        
                         #pushing the image and metadata
                         post_metadata()
                         post_image(baseName + 'stacked.tiff')
@@ -127,7 +130,8 @@ def driver():
                     else:
                         #error handling
                         print(baseName + ' skipped due to stacking errors')
-                        errorFiles.append(baseName)
+                        #adding file to errorFile.txt
+                        post_errorFiles(baseName)
                     
                     #deleting the bands
                     delete_images(image_wild)
@@ -136,8 +140,9 @@ def check_uploads(baseName):
     '''
     this function checks if the file is already stacked and on the server
     '''
-    if baseName in errorFiles:
-        return False
+    with open('errorFiles.txt') as f:
+        if baseName in f.read():
+            return False
     stacked = baseName + 'stacked.tiff'
     url = baseURL + '/uploads/' + stacked
     r = requests.get(url, stream = True)
@@ -181,6 +186,41 @@ def post_metadata():
     file= 'stacked/metadata.json'
     url = baseURL + '/scripts/upload.php'
     data = {'type': 1, 'fileName': 'metadata.json', 'fileToUpload': open(file, 'rb').read()}
+    r = requests.post(url, data = data)
+    print(r.status_code)
+    return
+    
+def update_errorFiles():
+    '''
+    updates a txt file of files that have filed
+    '''
+    url = baseURL+ '/uploads/errorFiles.txt'
+    filename = url.split("/")[-1]
+    r = requests.get(url, stream = True)
+    if r.status_code == 200:
+        r.raw.decode_content = True
+        
+        with open(filename, "wb") as f:
+            shutil.copyfileobj(r.raw,f)
+        
+        print('errorFiles updated')
+        os.rename(filename,  filename)
+    else:
+        print('errorFiles update failed')
+
+def post_errorFiles(baseName):
+    '''
+    adds failed file to errorFiles.txt and uploads to server
+    '''
+    file = open("errorFiles.txt","w")
+    file.write(baseName)
+    file.write("\n")
+    file.close()
+    
+    print('posting errorFiles')
+    file= 'errorFiles.txt'
+    url = baseURL + '/scripts/upload.php'
+    data = {'type': 1, 'fileName': 'errorFiles.txt', 'fileToUpload': open(file, 'rb').read()}
     r = requests.post(url, data = data)
     print(r.status_code)
     return
