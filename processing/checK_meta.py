@@ -134,19 +134,7 @@ def post_metadata():
     return
                    
 if __name__ == "__main__":
-    get_direcetory()
-    get_metadata_file()
-    stacked = getFiles()
-    in_meta = check_metadata()
-    baseNames = []
-    for image in stacked:
-        if image.split('.')[-1] == 'tiff':
-            if image not in in_meta:
-                baseNames.append( image.split('_')[0] + '_' + image.split('_')[1] + '_')
-    print(baseNames)  
-    find_url(baseNames)
     post_metadata()
-    
     
     
     

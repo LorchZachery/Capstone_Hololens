@@ -4792,12 +4792,16 @@
     "0": "index.html",
     "scripts": [
         "current_status.json",
+        "database.php",
+        "db_url.php",
         "directory.json",
         "directory.php",
         "download.php",
         "info.php",
         "phpinfo.php",
-        "upload.php"
+        "query.php",
+        "upload.php",
+        "x_y.php"
     ],
     "uploads": [
         "errorFiles.txt",
@@ -4890,6 +4894,15 @@
         "IMG_0091_stacked.tiff",
         "IMG_0092_stacked.tiff",
         "IMG_0093_stacked.tiff",
+        "IMG_0094_stacked.tiff",
+        "IMG_0095_stacked.tiff",
+        "IMG_0096_stacked.tiff",
+        "IMG_0097_stacked.tiff",
+        "IMG_0100_stacked.tiff",
+        "IMG_0102_stacked.tiff",
+        "IMG_0103_stacked.tiff",
+        "IMG_0104_stacked.tiff",
+        "IMG_0105_stacked.tiff",
         "IMG_0106_stacked.tiff",
         "IMG_0107_stacked.tiff",
         "IMG_0108_stacked.tiff",

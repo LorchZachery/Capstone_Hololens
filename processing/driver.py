@@ -5,7 +5,7 @@ import json
 import add_json as data
 import stack_images as stack
 from getmac import get_mac_address as gma
-
+import dp_connect as db
 
 #baseURL to server
 baseURL = 'http://10.1.100.138'
@@ -100,52 +100,63 @@ def driver():
                 #baseName is the file name without its band number
                 baseName = file.split('_')[0] + '_' + file.split('_')[1] + '_'
                 
-                update_errorFiles()
+                
                 # checking if the file has already been stacked
                 if check_uploads(baseName):
                     
-                    #post current working file
-                    post_current_file(baseName)
-                    #getting each band for the image
-                    for band in range(1,7):
-                        image = baseName + str(band) + '.tif'
-                        url = baseURL + '/' + "files" + '/' + set + '/' + batch + '/' + image
-                        print(url)
-                        #pullling the image band
-                        pull_image(url)
+                   #post current working file
+                   post_current_file(baseName)
+                   #getting each band for the image
+                   for band in range(1,7):
+                       image = baseName + str(band) + '.tif'
+                       url = baseURL + '/' + "files" + '/' + set + '/' + batch + '/' + image
+                       print(url)
+                       #pullling the image band
+                       pull_image(url)
+                   
+                   #giving the images to stack function
+                   image_wild = baseName + '*.tif'
+                   imagePath = os.path.join('..','data')
+                   imageNames = glob.glob(os.path.join(imagePath,image_wild))
+                   successCode = stack.stackImages(baseName, imageNames)
+                   if successCode != -1:
+                   	file = baseName + '3.tif'
+                   	data.updateDatabase(file, bombsCoor)
+                   	stacked = '../processing/stacked/' + baseName + 'stacked.tiff'
+                   	os.remove(stacked)
+                   else:
+              		#error handling
+                       print(baseName + ' skipped due to stacking errors')
+                       #adding file to errorFile.txt
+                       update_errorFiles(baseName)
+                   #deleting the bands
+                   delete_images(image_wild)
                     
-                    #giving the images to stack function
-                    image_wild = baseName + '*.tif'
-                    imagePath = os.path.join('..','data')
-                    imageNames = glob.glob(os.path.join(imagePath,image_wild))
-                    successCode = stack.stackImages(baseName, imageNames)
-                    if successCode != -1:
-                    
-                        
-                        #updating the metadata json
-                        update_metadata(baseName)
-                        
-                        
-                        
-                        #pushing the image and metadata
-                        post_metadata()
-                        post_image(baseName + 'stacked.tiff')
-                        
-                        #deleting stacked image
-                        stacked = '../processing/stacked/' + baseName + 'stacked.tiff'
-                        os.remove(stacked)
-                    else:
-                        #error handling
-                        print(baseName + ' skipped due to stacking errors')
-                        #adding file to errorFile.txt
-                        post_errorFiles(baseName)
-                    
-                    #deleting the bands
-                    delete_images(image_wild)
-                    
+
+def check_uploads(baseName):
+    statement = "SELECT * from errorfiles where BaseName=" + "'"+ baseName + "'"
+    result = db.query_db (statement, 'SELECT')
+    if(len(result) != 0):
+        return False
+    
+    statement = "SELECT BaseName from currentfiles where BaseName=" + "'" + baseName + "'"
+    result = db.query_db(statement, 'SELECT')
+    if(len(result) != 0):
+    	print(baseName + " being stacked by another machine")
+    	return False
+    
+    statement = "SELECT image_id from images where image_name=" + "'"+ baseName  + "stacked.tiff" +  "'"
+    result = db.query_db(statement, 'SELECT')
+    if(len(result) != 0):
+        print(baseName + ' already stacked')
+        return False
+    else:
+        print('pulling' + basename +' to be stacked')
+        return True
+"""
 def check_uploads(baseName):
     '''
-    this function checks if the file is already stacked and on the server
+    #this function checks if the file is already stacked and on the server
     '''
     running = parse_current_files()
     if baseName in running:
@@ -163,7 +174,12 @@ def check_uploads(baseName):
     else:
         print('pulling ' + baseName + ' to be stacked')
         return True
+"""
 
+
+
+
+"""
 def update_metadata(baseName):
     '''
     this function pulls the current metadata json and then updataes it with new data
@@ -188,10 +204,11 @@ def update_metadata(baseName):
     #using file for band three just as the base file to get over arching meta data
     file = baseName + '3.tif'
     data.createJson(file, bombsCoor)
-
+"""
+"""
 def post_metadata():
     '''
-    this function post the meteadata.json
+    #this function post the meteadata.json
     '''
     print('posting metadata')
     file= 'stacked/metadata.json'
@@ -200,10 +217,16 @@ def post_metadata():
     r = requests.post(url, data = data)
     print(r.status_code)
     return
-    
+"""
+
+def update_errorFiles(baseName):
+    statement = "INSERT INTO  errorfiles (BaseName) VALUES(" + "'"+  baseName  + "'" + ")"
+    result = db.query_db (statement, 'EDIT')
+
+""" 
 def update_errorFiles():
     '''
-    updates a txt file of files that have filed
+    #updates a txt file of files that have filed
     '''
     url = baseURL+ '/uploads/errorFiles.txt'
     filename = url.split("/")[-1]
@@ -218,10 +241,11 @@ def update_errorFiles():
         os.rename(filename,  filename)
     else:
         print('errorFiles update failed')
-
+"""
+"""
 def post_errorFiles(baseName):
     '''
-    adds failed file to errorFiles.txt and uploads to server
+    #adds failed file to errorFiles.txt and uploads to server
     '''
     file = open("errorFiles.txt","a")
     file.write(baseName)
@@ -235,13 +259,14 @@ def post_errorFiles(baseName):
     r = requests.post(url, data = data)
     print(r.status_code)
     return
-    
+"""   
+
 def post_current_file(baseName):
     
-    url = baseURL + '/scripts/info.php'
-    data = {'type' : 1, 'imageName' : baseName, 'MAC' : gma()}
-    r = requests.post(url, data =data)
-    
+   statement = "Update currentfiles set BaseName=" + "'" + baseName + "', time=Now() where  MAC=" + "'" + gma() + "'"
+   result = db.query_db (statement, 'EDIT')
+
+"""   
 def parse_current_files():
 
     url = baseURL + '/scripts/info.php'
@@ -255,6 +280,8 @@ def parse_current_files():
     print("current files being worked on:")
     print(b)
     return b
+"""
+
 def delete_images(image_wild):
     '''
     deletes images in the wild card set

@@ -6,6 +6,7 @@ import matplotlib.path as mpltPath
 import matplotlib.patches as patches
 import pylab
 import os
+import dp_connect as db
 
 r_earth = 6378
 directory = '../data/'
@@ -107,9 +108,62 @@ def checkingIfBomb(GPS, bombCoors):
             locations.append((bomb))
     return GPS, locations
     
+
+
+def newImgId():
+	statement = "SELECT max(image_id) from images"
+	
+	result = db.query_db (statement, 'SELECT')
+	return result[0]['max(image_id)'] + 1
+
+def updateBombs(image_id,bombs):
+	for index, bomb in enumerate(bombs):
+		statement = "INSERT INTO image_bombs (image_id, bomb_id, lat, lon) VALUES (" + str(image_id) + "," + str(index) + "," + str(lat) + "," + str(lon) + ")"
+		db.query_db(statement, 'EDIT')
+	
+def updateGps(image_id, GPS, lat, lon):
+	
+	statement = "INSERT INTO gps (id, area, lat, lon) VALUES (" + str(image_id) +", 'center'," + str(lat) + "," + str(lon) + ")"
+	db.query_db(statement, 'EDIT')
+	
+	
+	spots = ["top right", "top left", "bottom right", "bottom left"]
+	
+	
+	for index, spot in enumerate(spots):
+		statement = "INSERT INTO gps (id, area, lat, lon) VALUES (" + str(image_id) +"," + spot + "," + str(GPS[index][0]) + "," + str(GPS[index][1]) + ")"
+		db.query_db(statement, 'EDIT')
+		
+
+def updateDatabase(filename, bombCoors):
+	filepath = directory + filename
+	img = metadata.Metadata(filepath)
+	lat = img.get_item('Composite:GPSLatitude')
+	lon = img.get_item('Composite:GPSLongitude')
+	yaw, pitch, roll = img.dls_pose()
+	alt = img.get_item('Composite:GPSAltitude')
+	elevation = getElevation(str(lat),str(lon))
+	
+	image_name = filename.split('.')[0][:-2] + '_stacked.tiff'
+	
+	image_id = newImgId()
+	
+	statement = "INSERT INTO  images (image_id, image_name, yaw, pitch, roll, height) VALUES(" + str(image_id) + ", '"+  image_name  + "', " + str(yaw) + "," + str(pitch) + "," + str(roll) +  "," + str(height) + ")"
+	
+	result = db.query_db (statement, 'EDIT')
+	
+	GPS, bombs = checkingIfBomb(getGPS(img, elevation, lat, lon, alt), bombCoors)
+	
+	updateGps(image_id, GPS, lat, lon)
+	updateBombs(image_id, bombs)
+
 def write_json(data, filename):
     with open(filename, 'w') as f:
         json.dump(data,f,indent =4)
+
+
+
+
 
 def createJson(filename, bombCoors):
     filepath = directory + filename
