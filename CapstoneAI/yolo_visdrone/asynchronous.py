@@ -1,8 +1,11 @@
 import asyncio
-from main import Adjusted
+import init
 
 async def Catch(bbox):
 	print("in async catch")
-    info = await Adjusted.UpdateBBox()
-	print("caught info: " + info)
+	info = bbox
+	print("caught info: " + str(info))
+	init.b_boxes.append(info)
+	print("current b box array: " + str(init.b_boxes))
+	return 1
 	

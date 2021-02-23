@@ -1,7 +1,7 @@
 print("in init")
 semaphore = 0
 test = "howlong/will/this/filepath/go.jpg"
-bboxes = []
+b_boxes = []
 x = 2
 
 

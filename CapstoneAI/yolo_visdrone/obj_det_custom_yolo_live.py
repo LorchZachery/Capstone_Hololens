@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import asyncio
+from asynchronous import Catch
 
 
 """
@@ -12,7 +13,7 @@ class Adjusted:
 	def __init__(self):
 		self.CONF_THRESH, self.NMS_THRESH = 0.01, 0.5
 		self.output_layers, self.frame_h, self.frame_w, self.myColor = [], None, None, None
-		self.info = {"name": "", "center": (0,0)}
+		self.names = []
 
 	def detect_annotate(self, img, net, classes):
 
@@ -39,11 +40,14 @@ class Adjusted:
 					x = int(center_x - w / 2)
 					y = int(center_y - h / 2)
 
-					self.info["center"] = (center_x, center_y)
+					#self.info["center"] = (center_x, center_y)
 
 
 					b_boxes.append([x, y, int(w), int(h)])
-					asyncio.run(UpdateBBox(b_boxes[-1]))
+					B_Box = b_boxes[-1] + [self.names[-1]]
+					#B_Box.append(self.names[-1])
+					
+					asyncio.run(UpdateBBox(B_Box))
 					#bbox = "x: " + str(b_boxes[-1][0]) + ", y: " + str(b_boxes[-1][1]) + ", w: " + str(b_boxes[-1][2]) + ", h: " + str(b_boxes[-1][3]) + "\n"
 				   # btext.write(bbox)
 					confidences.append(float(confidence))
@@ -57,6 +61,7 @@ class Adjusted:
 			# if len(indices) > 0:
 			#     indices = indices.flatten()
 			for index in indices:
+				#print(b_boxes[index])
 				x, y, w, h = b_boxes[index]
 				cv2.rectangle(img, (x, y), (x + w, y + h), (20, 20, 230), 2)
 				cv2.putText(img, classes[class_ids[index]], (x + 5, y + 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.myColor,
@@ -73,7 +78,10 @@ class Adjusted:
 		in_config = 'yolov4-tiny-custom.cfg'
 		name_file = 'custom.names'
 
-		self.info["name"] = image_file.split("/")[-1]
+		#self.names.append(image_file.split("/")[-1])
+		self.names.append(image_file.split("\\")[-1])
+		print(self.names[-1])
+		#cv2.waitKey(0)
 
 		# load names
 		with open(name_file, "r") as f:
@@ -137,13 +145,14 @@ class Adjusted:
 
 			self.detect_annotate(img, net, classes)
 
-			cv2.imshow("Result", img)
-			cv2.waitKey(0)
+			#cv2.imshow("Result", img)
+			#cv2.waitKey(0)
 			
 	
-async def UpdateBBox(b_box):
-	print("in update BBox")
-	print("BBox received: " + str(b_box))
-	return b_box
+async def UpdateBBox(B_Box):
+	#print("in update BBox")
+	print("BBox received: " + str(B_Box))
+	successful = await Catch(B_Box)
+	
 		
 		
