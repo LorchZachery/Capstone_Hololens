@@ -11,3 +11,4 @@ pic_name = pic_name[-1]
 
 
 print(pic_name)
+

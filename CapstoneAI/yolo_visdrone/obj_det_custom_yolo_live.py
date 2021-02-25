@@ -71,7 +71,7 @@ class Adjusted:
 	# if __name__ == '__main__':
 
 		video_stream = False
-		image_file = "test_images/test.jpg"
+		image_file = "test_images/1.jpg"
 		if filename!=None:
 			image_file = filename
 		in_weights = 'yolov4-tiny-custom_last.weights'
@@ -79,7 +79,7 @@ class Adjusted:
 		name_file = 'custom.names'
 
 		#self.names.append(image_file.split("/")[-1])
-		self.names.append(image_file.split("\\")[-1])
+		self.names.append(image_file.split("\\")[-1].split("/")[-1])
 		print(self.names[-1])
 		#cv2.waitKey(0)
 
@@ -145,14 +145,16 @@ class Adjusted:
 
 			self.detect_annotate(img, net, classes)
 
-			#cv2.imshow("Result", img)
-			#cv2.waitKey(0)
+			cv2.imshow("Result", img)
+			cv2.waitKey(0)
 			
 	
 async def UpdateBBox(B_Box):
 	#print("in update BBox")
 	print("BBox received: " + str(B_Box))
 	successful = await Catch(B_Box)
+	if successful:
+		print("everything works")
 	
 		
 		
