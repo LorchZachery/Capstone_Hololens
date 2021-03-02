@@ -9,7 +9,6 @@ url = dfcsURL + 'query.php'
 
 #SELECT is to select data, EDIT is for insert remove delete
 
-
 def query_db(statement, command, verbose=False):
     data = {'query' : statement, 'type' : command}
     #try:

@@ -56,6 +56,9 @@ async def json():
 	gps_lon = gps_per_width * cur_box[0] + img_data[name]["top_left"][1]
 	gps_lat = img_data[name]["top_left"][0] - gps_per_height * cur_box[1]
 	
+	gps_lon = '%.6f'%(gps_lon)
+	gps_lat = '%.6f'%(gps_lat)
+	
 	img_data[name][(box_x, box_y)] = {}
 	img_data[name][(box_x, box_y)]['lat'] = gps_lat
 	img_data[name][(box_x, box_y)]['lon'] = gps_lon
