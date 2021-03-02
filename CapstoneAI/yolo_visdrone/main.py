@@ -3,6 +3,7 @@ import os
 import init
 from asynchronous import Catch
 import asyncio
+from dp_connect import insert_latlon as update
 
 #print(init.x)
 
@@ -20,3 +21,8 @@ for img in os.listdir(imgset):
 """
 #asyncio.run(Catch)
 adj.testRun()
+for img in init.img_data:
+	for box in img:
+		if type(box) is not dict:
+			continue
+		update(box['lat'], box['lon'])

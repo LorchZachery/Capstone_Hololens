@@ -44,7 +44,7 @@ class Adjusted:
 
 
 					b_boxes.append([x, y, int(w), int(h)])
-					B_Box = b_boxes[-1] + [self.names[-1]]
+					B_Box = [center_x, center_y] + [self.names[-1]]
 					#B_Box.append(self.names[-1])
 					
 					asyncio.run(UpdateBBox(B_Box))
