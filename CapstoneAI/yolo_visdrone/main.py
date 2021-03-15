@@ -105,11 +105,15 @@ for img in os.listdir(imgset):
 adj.testRun()
 print("finished test run")
 print(init.img_data)
+i = 0
 for img in init.img_data:
 	print(img)
 	for box in init.img_data[img]:
+		if i > 5:
+			break
 		if type(init.img_data[img][box]) is not dict:
 			continue
 		insert_latlon(init.img_data[img][box]['lat'], init.img_data[img][box]['lon'])
+		i += 1
 		#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
 		
