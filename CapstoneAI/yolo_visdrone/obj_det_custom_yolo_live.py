@@ -1,3 +1,13 @@
+#########################################################################################################
+# Author - Dr. Steven Novotny, @stevenjnovotny
+# Contributer - C1C Jonathan Nash, @JonathanNash21
+# Last Updated - 17 Mar 2021
+# Brief - Takes in an image(s) or video stream and passes that information to an AI which will look for
+# 		  vehicles and encloses found vehicles in a unique bounding box. This information is then passed
+#   	  on to asynchronous.py, which will handle GPS calculations and data formatting to submit to the 
+#		  database.
+#########################################################################################################
+
 import cv2
 import numpy as np
 import asyncio
@@ -10,18 +20,36 @@ use custom yolo to evaluate video stream
 
 
 class Adjusted:
+#########################################################################################################
+# init - initializethe Adjusted class
+# self.CONF_THRESH - confidence threshold for whether an AI will display a bounding box or not
+# self.NMS_THRESH - non maximum suppression threshold, helps prevent bounding boxes from overlapping
+# self.output_layers - 
+# self.frame_h - height of the image
+# self.frame_w - width of the image
+# self.myColor - used for text writing
+# self.names - name of the image
+#########################################################################################################
 	def __init__(self):
 		self.CONF_THRESH, self.NMS_THRESH = 0.01, 0.5
 		self.output_layers, self.frame_h, self.frame_w, self.myColor = [], None, None, None
 		self.names = []
-
+		
+#########################################################################################################
+# detect_annotate - runs the image through the AI and annotates all discovered vehicles in bounding boxes
+#                   and also sends the bounding box information to UpdateBBox
+# self - self value for class
+# img - the image that the AI will look at
+# net - neural net weights and configuration
+# classes - different classifications the AI will look for
+#########################################################################################################
 	def detect_annotate(self, img, net, classes):
 
 		blob = cv2.dnn.blobFromImage(img, 0.00392, (416, 416), swapRB=True, crop=False)
 		net.setInput(blob)
 		layer_outputs = net.forward(self.output_layers)
 
-		class_ids, confidences, b_boxes = [], [], []
+		class_ids,confidences, b_boxes = [], [], []
 		# print(layer_outputs)
 		#btext = open("boundingBoxes.txt", "w")
 		for output in layer_outputs:
@@ -44,9 +72,12 @@ class Adjusted:
 
 
 					b_boxes.append([x, y, int(w), int(h)])
+					
+					# information that will be sent to asynchronous.py, bounding box's center x and y coordinate (on the image, not GPS) and the image name
 					B_Box = [center_x, center_y] + [self.names[-1]]
 					#B_Box.append(self.names[-1])
 					
+					# update the main dictionary (held in init.py) asynchronously
 					asyncio.run(UpdateBBox(B_Box))
 					#bbox = "x: " + str(b_boxes[-1][0]) + ", y: " + str(b_boxes[-1][1]) + ", w: " + str(b_boxes[-1][2]) + ", h: " + str(b_boxes[-1][3]) + "\n"
 				   # btext.write(bbox)
@@ -67,7 +98,13 @@ class Adjusted:
 				cv2.putText(img, classes[class_ids[index]], (x + 5, y + 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.myColor,
 							2)
 
-	def testRun(self, filename=None):
+#########################################################################################################
+# AIRun - sets up all the necessary information for the AI to be able to parse through an image
+# self - self reference for class structure
+# filename - allows a specific image to be passed in when the function is called, allows for multiple images
+# 			 to be sent at a time.
+#########################################################################################################
+	def AIRun(self, filename=None):
 	# if __name__ == '__main__':
 
 		video_stream = False
@@ -148,10 +185,13 @@ class Adjusted:
 			cv2.imshow("Result", img)
 			cv2.waitKey(0)
 			
-	
+#########################################################################################################
+# UpdateBBox - updates the initial dictionary with the newest bounding box information
+# B_Box - the newest bounding box information to be added to the dictionary
+#########################################################################################################
 async def UpdateBBox(B_Box):
 	#print("in update BBox")
-	print("BBox received: " + str(B_Box))
+	#print("BBox received: " + str(B_Box))
 	successful = await Catch(B_Box)
 	if successful:
 		print("everything works")

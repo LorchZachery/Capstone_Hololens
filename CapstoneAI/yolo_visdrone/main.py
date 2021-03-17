@@ -1,3 +1,10 @@
+#########################################################################################################
+# Author - C1C Jonathan Nash, @JonathanNash21
+# Last Updated - 17 Mar 2021
+# Brief - Main function that will use a given folder of images and send them one at a time to the AI to 
+# 		  parse through. Also runs database functions once all the images have been processed (can be 
+#  		  updated to run asynchronously when each new "bomb" has been found).
+#########################################################################################################
 from obj_det_custom_yolo_live import Adjusted
 import os
 import init
@@ -9,12 +16,14 @@ import shutil
 import json
 import sys
 import time
+
+# current database location, ran by C1C Zach Lorch (@LorchZachery)
 dfcsURL = 'http://192.168.1.135/capstone/scripts/'
 url = dfcsURL + 'query.php'
-#from dp_connect import Update
+
 
 #print(init.x)
-
+'''
 def query_db(statement, command, verbose=False):
     data = {'query' : statement, 'type' : command}
     #try:
@@ -33,7 +42,8 @@ def query_db(statement, command, verbose=False):
         if verbose:
             print(b)
         return b
-
+'''
+# insert the lat and lon of a found bomb to the database
 def insert_latlon(lat, lon, last_id=False):
     new = False
     if last_id is False:
@@ -57,7 +67,7 @@ def insert_latlon(lat, lon, last_id=False):
         print('new bomb created with ID: ' + str(last_id) + ' with lat: ' + str(lat) + ' lon: ' + str(lon))
     else:
         print('bomb ' + str(last_id) + ' was updated with lat: ' + str(lat) + ' lon: ' + str(lon))
-
+'''
 def check_db(table):
     select = 'SELECT * from ' + table
     query_db(select, 'SELECT', True)
@@ -84,35 +94,45 @@ def updateXY(curr_lat, curr_lon):
 #updateXY(39.008431, -104.883484)
 
 
-#statement = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='bomb_location'"
 def check():
     statement = 'SELECT * from currentfiles'
     query_db(statement, 'SELECT', True)
 
-
+'''
+# the file location for image files I want to run through the AI
 imgset = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\test_images'
 
 # print(os.listdir(imgset))
+# initialize the Adjusted class
 adj = Adjusted()
-"""
+
+# run each image through the AI
 for img in os.listdir(imgset):
     img = imgset + "\\" + img
     # print(img)
     
-    adj.testRun(img)
-"""
+    adj.AIRun(img)
+
 #asyncio.run(Catch)
-adj.testRun()
-print("finished test run")
-print(init.img_data)
+# adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
+#print("finished AI run")
+#print(init.img_data)
+
 i = 0
+# send each found bomb to the database
+# each bomb is held in a dictionary{dictionary} structure, where the initial dictionary has entries separated by image name
 for img in init.img_data:
-	print(img)
+
+	#print(img)
+	# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
 	for box in init.img_data[img]:
-		if i > 5:
-			break
+		# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
+		#if i > 5:
+		#	break
+		# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
 		if type(init.img_data[img][box]) is not dict:
 			continue
+		# insert the appropriate information into the database	
 		insert_latlon(init.img_data[img][box]['lat'], init.img_data[img][box]['lon'])
 		i += 1
 		#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))

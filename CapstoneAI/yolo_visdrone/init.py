@@ -1,17 +1,14 @@
+#########################################################################################################
+# Author - C1C Jonathan Nash
+# Last Updated - 17 Mar 2021
+# Brief - holds the information that will be sent to the database
+#########################################################################################################
+
 #print("in init") #test stuff
 #test = "howlong/will/this/filepath/go.jpg"
 
 b_boxes = [] #bounding box information from the AI
 
-#x = 2
-
-
-#pic_name = test.split("/")
-
-#pic_name = pic_name[-1]
-
-
-#print(pic_name)
 
 #hardcoded image held in the test_images folder, taken from Google Earth and found GPS locations of all 4 corners, used for bounding box gps location calculation
 name = "1.jpg"
