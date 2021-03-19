@@ -16,6 +16,7 @@ import shutil
 import json
 import sys
 import time
+from image_data import ImageMetaData
 
 # current database location, ran by C1C Zach Lorch (@LorchZachery)
 dfcsURL = 'http://192.168.1.135/capstone/scripts/'
@@ -107,21 +108,21 @@ imgset = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\test_images'
 adj = Adjusted()
 
 # run each image through the AI
-for img in os.listdir(imgset):
+'''for img in os.listdir(imgset):
     img = imgset + "\\" + img
     # print(img)
     
     adj.AIRun(img)
-
+'''
 #asyncio.run(Catch)
-# adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
+adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
 #print("finished AI run")
 #print(init.img_data)
 
 i = 0
 # send each found bomb to the database
 # each bomb is held in a dictionary{dictionary} structure, where the initial dictionary has entries separated by image name
-for img in init.img_data:
+'''for img in init.img_data:
 
 	#print(img)
 	# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
@@ -136,4 +137,5 @@ for img in init.img_data:
 		insert_latlon(init.img_data[img][box]['lat'], init.img_data[img][box]['lon'])
 		i += 1
 		#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
-		
+		'''
+imgData = ImageMetaData("D:\HololensIED\CapstoneAI\loctets.jpeg")
