@@ -19,11 +19,11 @@ temp = {}
 img_data[name] = {
 	'CAM' : 2312,
 	'GROUND' : 2150,
-	'top_left' : (39.0082142, -104.8858718),
-	'bottom_left' : (39.0081569, -104.8858718),
-	'bottom_right' : (39.0081569, -104.8858002),
-	'top_right' : (39.0082142, -104.8858002),
+	'top_left' : (39.011729, -104.885030), # img top left GPS coordinate (lat, lon)
+	'bottom_left' : (39.011063, -104.885030), # img bottom left GPS coordinate
+	'bottom_right' : (39.011063, -104.883907), # img bottom right GPS coordinate
+	'top_right' : (39.011729, -104.883907), # img top right GPS coordinat
 	'img_h' : 635,
-	'img_w' : 800
+	'img_w' : 800,
 	}
 	#39.0082142, -104.8858718
