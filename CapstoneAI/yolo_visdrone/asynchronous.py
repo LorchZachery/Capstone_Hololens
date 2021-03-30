@@ -9,13 +9,14 @@
 
 import asyncio
 import init
+from gps_coord import GPSCalc 
 
 
 #########################################################################################################
 # Catch - catch bounding box information for AI-detected "bombs" which are sent to this function; only runs when it 	  gets information 
 # bbox - bounding box information sent from the AI, has the center width and height of the box
 #########################################################################################################
-async def Catch(bbox):
+async def Catch(bbox, ):
 	#print("in async catch") #make sure we enter the function
 	info = bbox 
 	#print("caught info: " + str(info))
@@ -60,7 +61,7 @@ async def json():
 	#print("box info " + str(box_x) + ", "+ str(box_y))
 		
 	# find the change in GPS value per coordinate across the x axis (longitude change)
-	print(img_data[name])
+	#print(img_data[name])
 	#if type(img_data[name]) != tuple:
 	#	return 0
 	gps_per_width = (abs(img_data[name]["top_left"][1] - img_data[name]["top_right"][1])) / (img_data[name]["img_w"] * 1.00000000)
@@ -91,6 +92,6 @@ async def json():
 
 	print("init img data 2")
 	print(init.img_data)
-	
+		
 	#return successful completion of the funtion
 	return 1

@@ -95,8 +95,9 @@ class Adjusted:
 				#print(b_boxes[index])
 				x, y, w, h = b_boxes[index]
 				cv2.rectangle(img, (x, y), (x + w, y + h), (20, 20, 230), 2)
-				cv2.putText(img, classes[class_ids[index]], (x + 5, y + 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.myColor,
-							2)
+				cv2.putText(img, classes[class_ids[index]], (x + 5, y + 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.myColor, 2)
+		else:
+			cv2.putText(img, "Nothing found", (10, 50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 3, (0, 0,255), 2)
 
 #########################################################################################################
 # AIRun - sets up all the necessary information for the AI to be able to parse through an image

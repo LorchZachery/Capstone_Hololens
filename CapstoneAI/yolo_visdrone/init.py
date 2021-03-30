@@ -7,23 +7,38 @@
 #print("in init") #test stuff
 #test = "howlong/will/this/filepath/go.jpg"
 
-b_boxes = [] #bounding box information from the AI
+from gps_coord import GPSCalc
+from image_data import ImageData
 
-
-#hardcoded image held in the test_images folder, taken from Google Earth and found GPS locations of all 4 corners, used for bounding box gps location calculation
-name = "1.jpg"
-#dictionary that holds all information in each relevant image provided to the AI
 img_data = {}
-temp = {}
-#puts hardcoded image information into dictionary - all of this *can* be provided, but the only necessary information (assuming top-down image profile with no pitch/yaw and a sufficiently small area covered so that we can assume the area is flat, with the top facing north) is the gps coordinates of the four corners of the image (top_left, bottom_left, bottom_right, top_right) and the images height and width (img_h + img_w)
-img_data[name] = {
-	'CAM' : 2312,
-	'GROUND' : 2150,
-	'top_left' : (39.011729, -104.885030), # img top left GPS coordinate (lat, lon)
-	'bottom_left' : (39.011063, -104.885030), # img bottom left GPS coordinate
-	'bottom_right' : (39.011063, -104.883907), # img bottom right GPS coordinate
-	'top_right' : (39.011729, -104.883907), # img top right GPS coordinat
-	'img_h' : 635,
-	'img_w' : 800,
-	}
-	#39.0082142, -104.8858718
+b_boxes	 = []
+
+class Init:
+	def __init__(self, img_path=None):
+		self.b_boxes = b_boxes #bounding box information from the AI
+		self.img_data = img_data
+		if img_path is None:
+			#hardcoded image held in the test_images folder, taken from Google Earth and found GPS locations of all 4 corners, used for bounding box gps location calculation
+			name = "1.jpg"
+			#dictionary that holds all information in each relevant image provided to the AI
+			#print("init img path was none")
+			#puts hardcoded image information into dictionary - all of this *can* be provided, but the only necessary information (assuming top-down image profile with no pitch/yaw and a sufficiently small area covered so that we can assume the area is flat, with the top facing north) is the gps coordinates of the four corners of the image (top_left, bottom_left, bottom_right, top_right) and the images height and width (img_h + img_w)
+			self.img_data[name] = {
+				'CAM' : 2312,
+				'GROUND' : 2150,
+				'top_left' : (39.011729, -104.885030), # img top left GPS coordinate (lat, lon)
+				'bottom_left' : (39.011063, -104.885030), # img bottom left GPS coordinate
+				'bottom_right' : (39.011063, -104.883907), # img bottom right GPS coordinate
+				'top_right' : (39.011729, -104.883907), # img top right GPS coordinat
+				'img_h' : 635,
+				'img_w' : 800,
+				}
+				#39.0082142, -104.8858718
+		else:
+			print("init img path was something")
+			data = ImageData(img_path)
+			print(data)
+	def get_img_data(self):
+		print("returning img data:")
+		print(self.img_data)
+		return self.img_data

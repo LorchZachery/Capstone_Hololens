@@ -7,7 +7,7 @@
 #########################################################################################################
 from obj_det_custom_yolo_live import Adjusted
 import os
-import init
+from init import Init
 from asynchronous import Catch
 import asyncio
 import os 
@@ -22,6 +22,8 @@ from image_data import ImageData
 dfcsURL = 'http://10.10.10.2/capstone/scripts/'
 url = dfcsURL + 'query.php'
 
+initial = Init()
+#initial = Init("D:\HololensIED\CapstoneAI\loctets.jpeg")
 
 #print(init.x)
 
@@ -111,23 +113,24 @@ adj = Adjusted()
 '''for img in os.listdir(imgset):
     img = imgset + "\\" + img
     # print(img)
-    image_info = image_data.ImageData(img)
+    image_info = ImageData(img)
     adj.AIRun(img)
 '''
 #asyncio.run(Catch)
 #image_info = ImageData("test_images/1.jpg")
-adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
+#adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
 #print("finished AI run")
 #print(init.img_data)
 
 i = 0
 # send each found bomb to the database
 # each bomb is held in a dictionary{dictionary} structure, where the initial dictionary has entries separated by image name
-for img in init.img_data:
+img_data = initial.get_img_data()
+for img in img_data:
 
 	print(img)
 	# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
-	for box in init.img_data[img]:
+	for box in img_data[img]:
 		#print("box")
 		# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
 		#if i > 5:
@@ -135,11 +138,11 @@ for img in init.img_data:
 		# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
 		#print(type(init.img_data[img][box]))
 		#print(init.img_data[img][box])
-		if type(init.img_data[img][box]) is not dict:
+		if type(img_data[img][box]) is not dict:
 			continue
 		# insert the appropriate information into the database	
 		#print("cont")
-		insert_latlon(init.img_data[img][box]['lat'], init.img_data[img][box]['lon'])
+		#insert_latlon(init.img_data[img][box]['lat'], init.img_data[img][box]['lon'])
 		
 		i += 1
 		#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
