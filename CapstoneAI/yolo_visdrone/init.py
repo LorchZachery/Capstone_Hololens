@@ -38,6 +38,21 @@ class Init:
 			print("init img path was something")
 			data = ImageData(img_path)
 			print(data)
+			img_name = data.getData()
+			gps_calc = GPSCalc()
+			
+			lat = self.img_data[img_name]['Latitude']
+			lon = self.img_data[img_name]['Longitude']
+			elevation = gps_calc.getElevation(lat, lon)
+			altitude = self.img_data[img_name]['Altitude']
+			print("elevation")
+			print(str(elevation))
+			
+			gps = gps_calc.getGPS(img_name, elevation, lat, lon, altitude)
+			
+			print("gps")
+			print(gps)
+			
 	def get_img_data(self):
 		print("returning img data:")
 		print(self.img_data)

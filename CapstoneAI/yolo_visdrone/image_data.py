@@ -35,3 +35,4 @@ class ImageData:
 
 		print("img data")
 		print(init.img_data)
+		return self.img

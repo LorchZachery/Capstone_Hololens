@@ -12,6 +12,8 @@ class GPSCalc:
 	def __init__(self):
 		self.r_earth = 6378
 		self.directory = '../data/'
+		
+		
 	def truncate(number, digits) -> float:
 		stepper = 10.0 ** digits
 		return math.trunc(stepper * number) / stepper
@@ -20,7 +22,7 @@ class GPSCalc:
 	  '''
 	  uses a free api to get the evelation of the lat and long given
 	  '''
-	  url = "https://nationalmap.gov/epqs/pqs.php?x=" + long + "&y=" + lat + "&units=Meters&output=json"
+	  url = "https://nationalmap.gov/epqs/pqs.php?x=" + str(long) + "&y=" + str(lat) + "&units=Meters&output=json"
 	  
 	  response = urllib.request.urlopen(url)
 	  data = json.loads(response.read())

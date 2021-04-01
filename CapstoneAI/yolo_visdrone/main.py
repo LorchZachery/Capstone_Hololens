@@ -19,11 +19,11 @@ import time
 from image_data import ImageData
 
 # current database location, ran by C1C Zach Lorch (@LorchZachery)
-dfcsURL = 'http://10.10.10.2/capstone/scripts/'
+dfcsURL = 'https://10.10.10.2/capstone/scripts/'
 url = dfcsURL + 'query.php'
 
-initial = Init()
-#initial = Init("D:\HololensIED\CapstoneAI\loctets.jpeg")
+#initial = Init()
+initial = Init("D:\HololensIED\CapstoneAI\loctets.jpeg")
 
 #print(init.x)
 
@@ -142,7 +142,7 @@ for img in img_data:
 			continue
 		# insert the appropriate information into the database	
 		#print("cont")
-		#insert_latlon(init.img_data[img][box]['lat'], init.img_data[img][box]['lon'])
+		#insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon'])
 		
 		i += 1
 		#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
