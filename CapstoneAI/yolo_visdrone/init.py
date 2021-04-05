@@ -9,6 +9,7 @@
 
 from gps_coord import GPSCalc
 from image_data import ImageData
+import PIL
 
 img_data = {}
 b_boxes	 = []
@@ -48,11 +49,23 @@ class Init:
 			print("elevation")
 			print(str(elevation))
 			
-			gps = gps_calc.getGPS(img_name, elevation, lat, lon, altitude)
+			img = PIL.Image.open(img_path)
+			
+			print(img)
+			
+			img_w, img_h = img.size
+			
+			print(img_w)
+			print(img_h)
+			gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude)
 			
 			print("gps")
 			print(gps)
 			
+			self.img_data[img_name]['top_right'] = gps[0]
+			self.img_data[img_name]['top_left'] = gps[1]
+			self.img_data[img_name]['bottom_right'] = gps[2]
+			self.img_data[img_name]['bottom_left'] = gps[3]
 	def get_img_data(self):
 		print("returning img data:")
 		print(self.img_data)

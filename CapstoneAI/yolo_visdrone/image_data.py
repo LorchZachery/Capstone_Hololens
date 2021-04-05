@@ -27,9 +27,9 @@ class ImageData:
 		for tag in data.keys():
 			print("%s: %s" % (tag, data[tag]))
 			init.img_data[self.img][tag] = data[tag]
-		#print("raw data")	
-		#for tag in rawData.keys():
-		#	print("%s: %s" % (tag, rawData[tag]))
+		print("raw data")	
+		for tag in rawData.keys():
+			print("%s: %s" % (tag, rawData[tag]))
 		#print("temp")
 		#print(init.temp)
 
