@@ -31,8 +31,8 @@ async def Catch(bbox, ):
 # json - parses captured bounding box data into a json format so that it can be sent to a database
 #########################################################################################################	
 async def json():
-	print("init img data 1") # make sure the function is entered
-	print(init.img_data) # prints out the current image data holder to check what is in it
+	#print("init img data 1") # make sure the function is entered
+	#print(init.img_data) # prints out the current image data holder to check what is in it
 	img_data = init.img_data # create local variable based off of main json data block
 	#for img in init.b_boxes:
 	#name = img[-1]
@@ -90,7 +90,7 @@ async def json():
 	img_data[name][(box_x, box_y)]['lon'] = gps_lon
 
 
-	print("init img data 2")
+	#print("init img data 2")
 	print(init.img_data)
 		
 	#return successful completion of the funtion

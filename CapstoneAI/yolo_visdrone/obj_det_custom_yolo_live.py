@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 import asyncio
 from asynchronous import Catch
+import init
 
 
 """
@@ -34,6 +35,7 @@ class Adjusted:
 		self.CONF_THRESH, self.NMS_THRESH = 0.01, 0.5
 		self.output_layers, self.frame_h, self.frame_w, self.myColor = [], None, None, None
 		self.names = []
+		self.data_struct = init.img_data
 		
 #########################################################################################################
 # detect_annotate - runs the image through the AI and annotates all discovered vehicles in bounding boxes
@@ -75,7 +77,7 @@ class Adjusted:
 					
 					# information that will be sent to asynchronous.py, bounding box's center x and y coordinate (on the image, not GPS) and the image name
 					B_Box = [center_x, center_y] + [self.names[-1]]
-					#B_Box.append(self.names[-1])
+					B_Box.append(self.names[-1])
 					
 					# update the main dictionary (held in init.py) asynchronously
 					asyncio.run(UpdateBBox(B_Box))
@@ -83,7 +85,9 @@ class Adjusted:
 				   # btext.write(bbox)
 					confidences.append(float(confidence))
 					class_ids.append(int(class_id))
-
+					print(class_id)
+					print(classes[class_id])
+					init.img_data[self.names[-1]][(center_x, center_y)]["classification"] = classes[class_id]
 		#btext.close()
 		if len(b_boxes) > 0:
 			# Perform non maximum suppression for the bounding boxes to filter overlapping and low confidence bounding boxes
@@ -92,10 +96,14 @@ class Adjusted:
 			# if len(indices) > 0:
 			#     indices = indices.flatten()
 			for index in indices:
-				#print(b_boxes[index])
+				#print(index)
+				print(b_boxes[index])
+				#print(class_ids[index])
 				x, y, w, h = b_boxes[index]
 				cv2.rectangle(img, (x, y), (x + w, y + h), (20, 20, 230), 2)
 				cv2.putText(img, classes[class_ids[index]], (x + 5, y + 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, self.myColor, 2)
+				print(classes[class_ids[index]])
+				#init.img_data[self.names[-1]][(X, Y)]["classification"] = classes[class_ids[index]] 
 		else:
 			cv2.putText(img, "Nothing found", (10, 50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 3, (0, 0,255), 2)
 
