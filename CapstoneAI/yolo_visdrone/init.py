@@ -10,6 +10,8 @@
 from gps_coord import GPSCalc
 from image_data import ImageData
 import PIL
+import os
+import time
 
 img_data = {}
 b_boxes	 = []
@@ -36,8 +38,53 @@ class Init:
 				}
 				#39.0082142, -104.8858718
 		else:
+			unaccess = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Unaccessed_Images'
+			access = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Accessed_Images'
+			try:
+				while(True):
+					for img in os.listdir(unaccess):
+						if img not in img_data:
+							data = ImageData(img_path)
+							print(data)
+							img_name = data.getData()
+							gps_calc = GPSCalc()
+							
+							lat = self.img_data[img_name]['Latitude']
+							lon = self.img_data[img_name]['Longitude']
+							elevation = gps_calc.getElevation(lat, lon)
+							altitude = self.img_data[img_name]['Altitude']
+							print("elevation")
+							print(str(elevation))
+							
+							img = PIL.Image.open(img_path)
+							
+							print(img)
+							
+							img_w, img_h = img.size
+							
+							print(img_w)
+							print(img_h)
+							gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude)
+							
+							print("gps")
+							print(gps)
+							
+							self.img_data[img_name]['top_right'] = gps[0]
+							self.img_data[img_name]['top_left'] = gps[1]
+							self.img_data[img_name]['bottom_right'] = gps[2]
+							self.img_data[img_name]['bottom_left'] = gps[3]
+							print(img_name)
+							img_cur = unaccess + '\\' + img_name
+							img_new = access + '\\' + img_name
+							print("moving " + img_name + " from unaccessed location to accessed location")
+							os.rename(img_cur, img_new)
+					time.sleep(5)
+					print("Unaccessed file empty")
+			except KeyboardInterrupt:
+				print("Exiting while loop")
+				pass
 			print("init img path was something")
-			data = ImageData(img_path)
+			'''data = ImageData(img_path)
 			print(data)
 			img_name = data.getData()
 			gps_calc = GPSCalc()
@@ -65,7 +112,7 @@ class Init:
 			self.img_data[img_name]['top_right'] = gps[0]
 			self.img_data[img_name]['top_left'] = gps[1]
 			self.img_data[img_name]['bottom_right'] = gps[2]
-			self.img_data[img_name]['bottom_left'] = gps[3]
+			self.img_data[img_name]['bottom_left'] = gps[3]'''
 	def get_img_data(self):
 		print("returning img data:")
 		print(self.img_data)

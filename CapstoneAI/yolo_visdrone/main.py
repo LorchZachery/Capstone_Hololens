@@ -6,7 +6,6 @@
 #  		  updated to run asynchronously when each new "bomb" has been found).
 #########################################################################################################
 from obj_det_custom_yolo_live import Adjusted
-import os
 from init import Init
 from asynchronous import Catch
 import asyncio
@@ -22,8 +21,8 @@ from image_data import ImageData
 dfcsURL = 'https://10.10.10.40/capstone/scripts/'
 url = dfcsURL + 'query.php'
 
-initial = Init()
-#initial = Init("D:\HololensIED\CapstoneAI\loctets.jpeg")
+#initial = Init()
+initial = Init("D:\HololensIED\CapstoneAI\loctets.jpeg")
 
 #print(init.x)
 
@@ -118,11 +117,11 @@ adj = Adjusted()
 '''
 #asyncio.run(Catch)
 #image_info = ImageData("test_images/1.jpg")
-adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
+#adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
 #print("finished AI run")
 #print(init.img_data)
 
-#adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig
+adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig
 
 i = 0
 # send each found bomb to the database
