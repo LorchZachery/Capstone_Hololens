@@ -21,10 +21,7 @@ from image_data import ImageData
 dfcsURL = 'https://10.10.10.40/capstone/scripts/'
 url = dfcsURL + 'query.php'
 
-#initial = Init()
-initial = Init("D:\HololensIED\CapstoneAI\loctets.jpeg")
-
-#print(init.x)
+initial = Init()
 
 def query_db(statement, command, verbose=False):
     data = {'query' : statement, 'type' : command}
@@ -117,35 +114,53 @@ adj = Adjusted()
 '''
 #asyncio.run(Catch)
 #image_info = ImageData("test_images/1.jpg")
-#adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
+
 #print("finished AI run")
 #print(init.img_data)
-
-adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig
-
+if initial.access_path:
+	try:
+		while(True):
+			if initial.mutex == 1:
+				print("in mutex 1")
+				asyncio.run(initial.look_for_image())
+			if len(initial.queue) > 0 and initial.mutex == 2:
+				print("in mutex 2")
+				adj.AIRun(initial.queue[0])
+				initial.queue.pop(0)
+				initial.mutex = 1
+			img_data = initial.get_img_data()
+			
+			for img in img_data:
+				print(img)
+				# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
+				for box in img_data[img]:
+					#print("box")
+					# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
+					#if i > 5:
+					#	break
+					# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
+					#print(type(init.img_data[img][box]))
+					#print(init.img_data[img][box])
+					if type(img_data[img][box]) is not dict or initial.img_data[img]["database_update"] == 1:
+						continue
+					# insert the appropriate information into the database	
+					#print("cont")
+					#insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon'])
+					initial.img_data[img]["database_update"] = 1
+					
+					i += 1
+					#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
+			time.sleep(5)
+	except KeyboardInterrupt:
+			print("Exiting while loop")
+			pass
+else:
+	adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig
+	#adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
 i = 0
 # send each found bomb to the database
 # each bomb is held in a dictionary{dictionary} structure, where the initial dictionary has entries separated by image name
-img_data = initial.get_img_data()
-for img in img_data:
 
-	print(img)
-	# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
-	for box in img_data[img]:
-		#print("box")
-		# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
-		#if i > 5:
-		#	break
-		# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
-		#print(type(init.img_data[img][box]))
-		#print(init.img_data[img][box])
-		if type(img_data[img][box]) is not dict:
-			continue
-		# insert the appropriate information into the database	
-		#print("cont")
-		#insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon'])
-		
-		i += 1
-		#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
+
 		
 #imgData = ImageMetaData("D:\HololensIED\CapstoneAI\loctets.jpeg")

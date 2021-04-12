@@ -12,6 +12,7 @@ from image_data import ImageData
 import PIL
 import os
 import time
+import asyncio
 
 img_data = {}
 b_boxes	 = []
@@ -20,7 +21,13 @@ class Init:
 	def __init__(self, img_path=None):
 		self.b_boxes = b_boxes #bounding box information from the AI
 		self.img_data = img_data
-		if img_path is None:
+		self.unaccess = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Unaccessed_Images'
+		self.access = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Accessed_Images'
+		self.access_path = True#False
+		self.queue = []
+		self.mutex = 1
+		#if img_path is None:
+		if len(os.listdir(self.unaccess)) == 0:
 			#hardcoded image held in the test_images folder, taken from Google Earth and found GPS locations of all 4 corners, used for bounding box gps location calculation
 			name = "1.jpg"
 			#dictionary that holds all information in each relevant image provided to the AI
@@ -38,52 +45,8 @@ class Init:
 				}
 				#39.0082142, -104.8858718
 		else:
-			unaccess = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Unaccessed_Images'
-			access = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Accessed_Images'
-			try:
-				while(True):
-					for img in os.listdir(unaccess):
-						if img not in img_data:
-							data = ImageData(img_path)
-							print(data)
-							img_name = data.getData()
-							gps_calc = GPSCalc()
-							
-							lat = self.img_data[img_name]['Latitude']
-							lon = self.img_data[img_name]['Longitude']
-							elevation = gps_calc.getElevation(lat, lon)
-							altitude = self.img_data[img_name]['Altitude']
-							print("elevation")
-							print(str(elevation))
-							
-							img = PIL.Image.open(img_path)
-							
-							print(img)
-							
-							img_w, img_h = img.size
-							
-							print(img_w)
-							print(img_h)
-							gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude)
-							
-							print("gps")
-							print(gps)
-							
-							self.img_data[img_name]['top_right'] = gps[0]
-							self.img_data[img_name]['top_left'] = gps[1]
-							self.img_data[img_name]['bottom_right'] = gps[2]
-							self.img_data[img_name]['bottom_left'] = gps[3]
-							print(img_name)
-							img_cur = unaccess + '\\' + img_name
-							img_new = access + '\\' + img_name
-							print("moving " + img_name + " from unaccessed location to accessed location")
-							os.rename(img_cur, img_new)
-					time.sleep(5)
-					print("Unaccessed file empty")
-			except KeyboardInterrupt:
-				print("Exiting while loop")
-				pass
-			print("init img path was something")
+			self.access_path = True
+			print("There are unaccessed images")
 			'''data = ImageData(img_path)
 			print(data)
 			img_name = data.getData()
@@ -113,6 +76,63 @@ class Init:
 			self.img_data[img_name]['top_left'] = gps[1]
 			self.img_data[img_name]['bottom_right'] = gps[2]
 			self.img_data[img_name]['bottom_left'] = gps[3]'''
+	
+	async def look_for_image(self):
+		if self.mutex == 2:
+			print("waiting for mutex 1")
+			return
+		if len(os.listdir(self.unaccess)) == 0:		
+			print("Unaccessed file empty")
+		for img in os.listdir(self.unaccess):
+			img_path = self.unaccess + "\\" + img
+			if img not in img_data:
+				
+				self.mutex = 1
+				
+				print(img_path)
+				data = ImageData(img_path)
+				print(data)
+				img_name = data.getData()
+				gps_calc = GPSCalc()
+				
+				lat = self.img_data[img_name]['Latitude']
+				lon = self.img_data[img_name]['Longitude']
+				elevation = gps_calc.getElevation(lat, lon)
+				altitude = self.img_data[img_name]['Altitude']
+				print("elevation")
+				print(str(elevation))
+				
+				img = PIL.Image.open(img_path)
+				
+				print(img)
+				
+				img_w, img_h = img.size
+				
+				img.close()
+				print(img_w)
+				print(img_h)
+				gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude)
+				
+				print("gps")
+				print(gps)
+				
+				self.img_data[img_name]['top_right'] = gps[0]
+				self.img_data[img_name]['top_left'] = gps[1]
+				self.img_data[img_name]['bottom_right'] = gps[2]
+				self.img_data[img_name]['bottom_left'] = gps[3]
+				print(img_name)
+				img_new = self.access + '\\' + img_name
+				
+				print("moving " + img_name + " from unaccessed location to accessed location")
+				os.rename(img_path, img_new)
+				self.queue.append(img_new)
+				self.mutex = 2
+				
+			else:
+				os.remove(img_path)
+		
+	
+	
 	def get_img_data(self):
 		print("returning img data:")
 		print(self.img_data)
