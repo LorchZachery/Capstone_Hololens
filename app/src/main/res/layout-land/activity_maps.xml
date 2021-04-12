@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <fragment
+
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="359dp"
+        android:layout_height="match_parent"
+
+        tools:context=".MapsActivity" />
+
+    <TextView
+        android:id="@+id/current"
+        android:layout_width="447dp"
+        android:layout_height="match_parent"
+        android:layout_alignLeft="@id/map"
+        android:layout_marginLeft="338dp"
+
+
+        android:background="#363535"
+        android:clickable="true"
+        android:ellipsize="marquee"
+        android:onClick="hidButton"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        tools:ignore="LabelFor" />
+
+    <Button
+        android:id="@+id/delete_btn"
+        android:layout_width="307dp"
+        android:layout_height="115dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="17dp"
+
+        android:background="@drawable/deletebtn"
+        android:onClick="removeBomb"
+        android:text="Delete Bomb"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/add_btn"
+        android:layout_width="307dp"
+        android:layout_height="115dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="17dp"
+        android:background="@drawable/addbtn"
+        android:onClick="addBombClick"
+        android:text="Add Bomb"
+        android:visibility="invisible" />
+
+
+</RelativeLayout>
