@@ -21,6 +21,7 @@ from image_data import ImageData
 dfcsURL = 'https://10.10.10.40/capstone/scripts/'
 url = dfcsURL + 'query.php'
 
+#initialize main dictionary, important variables, etc. -> init.py
 initial = Init()
 
 def query_db(statement, command, verbose=False):

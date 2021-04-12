@@ -2,6 +2,7 @@
 # https://pypi.org/project/gpsphoto
 from GPSPhoto import gpsphoto
 import init
+
 class ImageData:
 	def __init__(self, file = None):
 		print("in init imagedata")
