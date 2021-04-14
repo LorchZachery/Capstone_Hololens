@@ -87,9 +87,9 @@ class Init:
 				
 				#print(img_path)
 				data = ImageData(img_path) #get the image's information ->image_data.py
-				print(data)
+				#print(data)
 				img_name = data.getData()
-				gps_calc = GPSCalc()
+				gps_calc = GPSCalc() # instantiate the GPSCalc class -> gps_coord.py
 				
 				lat = self.img_data[img_name]['Latitude']
 				lon = self.img_data[img_name]['Longitude']
