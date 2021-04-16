@@ -1,5 +1,5 @@
 <?php
-    // Database
+    // Database this is De fretti's
     define("_DB_SERVERNAME", "localhost");
     define("_DB_NAME", "capstone");
     define("_DB_USERNAME", "root");

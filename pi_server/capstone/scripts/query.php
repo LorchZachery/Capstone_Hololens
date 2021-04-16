@@ -1,5 +1,5 @@
 <?php
-
+	//this script allows you to query the database, used in python scripts.
 	include 'database.php';
 	
 	$value = (htmlspecialchars($_POST['query']));

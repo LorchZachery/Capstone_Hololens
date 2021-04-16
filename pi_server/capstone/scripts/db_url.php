@@ -1,5 +1,5 @@
 <?php
-
+	//accces database from url and query it
 	include 'database.php';
 	
 	$value = (htmlspecialchars($_GET['query']));

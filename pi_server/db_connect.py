@@ -6,8 +6,12 @@ import sys
 import time
 
 
-class db_connect(object):
 
+class db_connect(object):
+    '''
+    this allows you to connect to the database and insert lat and lons, good for debugging
+    
+    '''
     def __init__(self):
         self.dfcsURL = 'https://ied.dfcs-cloud.net/scripts/'
         self.url = self.dfcsURL + 'query.php'
