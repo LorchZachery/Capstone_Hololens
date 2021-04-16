@@ -100,68 +100,52 @@ def check():
 
 '''
 # the file location for image files I want to run through the AI
-imgset = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\test_images'
+#imgset = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\test_images'
 
 # print(os.listdir(imgset))
-# initialize the Adjusted class
+# initialize the Adjusted class -> obj_det_custom_yolo_live.py
 adj = Adjusted()
 
-# run each image through the AI
-'''for img in os.listdir(imgset):
-    img = imgset + "\\" + img
-    # print(img)
-    image_info = ImageData(img)
-    adj.AIRun(img)
-'''
-#asyncio.run(Catch)
-#image_info = ImageData("test_images/1.jpg")
-
-#print("finished AI run")
-#print(init.img_data)
-if initial.access_path:
-	try:
-		while(True):
-			if initial.mutex == 1:
-				print("in mutex 1")
-				asyncio.run(initial.look_for_image())
-			if len(initial.queue) > 0 and initial.mutex == 2:
-				print("in mutex 2")
-				adj.AIRun(initial.queue[0])
-				initial.queue.pop(0)
-				initial.mutex = 1
-			img_data = initial.get_img_data()
-			
-			for img in img_data:
-				print(img)
-				# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
-				for box in img_data[img]:
-					#print("box")
-					# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
-					#if i > 5:
-					#	break
-					# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
-					#print(type(init.img_data[img][box]))
-					#print(init.img_data[img][box])
-					if type(img_data[img][box]) is not dict or initial.img_data[img]["database_update"] == 1:
-						continue
-					# insert the appropriate information into the database	
-					#print("cont")
-					#insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon'])
-					initial.img_data[img]["database_update"] = 1
-					
-					i += 1
-					#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
-			time.sleep(5)
-	except KeyboardInterrupt:
+if initial.access_path: # not doing the hardcoded test
+	try: # allows for a keyboard interrupt
+		while(True): # continuously run this code until a keyboard interrupt occurs
+			update = 0 # check to see if the AI ran
+			if initial.mutex == 1: # check to see if init can access the files
+				#print("in mutex 1")
+				asyncio.run(initial.look_for_image()) # look for images in the unaccessed folder -> init.py/look_for_image
+			if len(initial.queue) > 0 and initial.mutex == 2: # if there are images to run and AI can access the files
+				#print("in mutex 2")
+				adj.AIRun(initial.queue[0]) # run the AI on the first image in the queue -> obj_det_custom_yolo_live.py
+				initial.queue.pop(0) # remove the image we just ran through the AI
+				initial.mutex = 1 # change locks
+				update = 1
+			if update:
+				img_data = initial.get_img_data() # get the updated data
+				
+				for img in img_data: # for each image in the dictionary, send any new data to the database
+					# print(img)
+					# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
+					for box in img_data[img]: # for each bounding box in the image
+						#print("box")
+						# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
+						#if i > 5:
+						#	break
+						# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
+						#print(type(init.img_data[img][box]))
+						#print(init.img_data[img][box])
+						if type(img_data[img][box]) is not dict or initial.img_data[img]["database_update"] == 1: # make sure we are accessing the correct data, and only that which was newly added
+							continue
+						# insert the appropriate information into the database	
+						insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon']) # sometimes commented out so we don't get runtime errors due to not being connected to db
+						initial.img_data[img]["database_update"] = 1 # mark this data as having already been sent to the database
+						
+						#i += 1 # counter to limit entries to database, if desired
+						#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
+			time.sleep(5) # sleep for 5 seconds before checking everything again, general use should be longer
+	except KeyboardInterrupt: # if ctrl+c is hit, stop the program
 			print("Exiting while loop")
 			pass
-else:
-	adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig
-	#adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
-i = 0
-# send each found bomb to the database
-# each bomb is held in a dictionary{dictionary} structure, where the initial dictionary has entries separated by image name
+else: # testing only, nothing in unaccessed folder
+	#adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig - should run this using the unaccessed folder now
+	adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
 
-
-		
-#imgData = ImageMetaData("D:\HololensIED\CapstoneAI\loctets.jpeg")

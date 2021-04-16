@@ -77,7 +77,7 @@ class Adjusted:
 					
 					# information that will be sent to asynchronous.py, bounding box's center x and y coordinate (on the image, not GPS) and the image name
 					B_Box = [center_x, center_y] + [self.names[-1]]
-					B_Box.append(self.names[-1])
+					#B_Box.append(self.names[-1])
 					
 					# update the main dictionary (held in init.py) asynchronously
 					asyncio.run(UpdateBBox(B_Box))
@@ -117,7 +117,7 @@ class Adjusted:
 	# if __name__ == '__main__':
 
 		video_stream = False
-		image_file = "test_images/1.jpg"
+		image_file = "test_images/1.jpg" # default for testing - AI will detect cars in this image
 		if filename!=None:
 			image_file = filename
 		in_weights = 'yolov4-tiny-custom_last.weights'
@@ -125,14 +125,14 @@ class Adjusted:
 		name_file = 'custom.names'
 
 		#self.names.append(image_file.split("/")[-1])
-		self.names.append(image_file.split("\\")[-1].split("/")[-1])
-		print(self.names[-1])
+		self.names.append(image_file.split("\\")[-1].split("/")[-1]) # extract the image name
+		#print(self.names[-1])
 		#cv2.waitKey(0)
 
 		# load names
-		with open(name_file, "r") as f:
+		with open(name_file, "r") as f: # names of the classifiers the AI can detect
 			classes = [line.strip() for line in f.readlines()]
-		print(classes)
+		#print(classes)
 
 		# Load the network
 		net = cv2.dnn.readNetFromDarknet(in_config, in_weights)
@@ -140,7 +140,10 @@ class Adjusted:
 		net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 		layers = net.getLayerNames()
 		self.output_layers = [layers[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-
+		
+		#****IMPORTANT*******
+		#I did not edit/configure this code to work with everything else, only images - would advise caution if you want to try video streams
+		
 		if video_stream:
 			# cap = cv2.VideoCapture(0)
 			cap = cv2.VideoCapture('test_video.mov')
@@ -190,9 +193,10 @@ class Adjusted:
 			myColor = (20, 20, 230)
 
 			self.detect_annotate(img, net, classes)
-
-			cv2.imshow("Result", img)
-			cv2.waitKey(0)
+			
+			#these show the images, but slow everything down. They aren't needed, but if you want to see what the AI is detecting (or not) you need them uncommented
+			#cv2.imshow("Result", img)
+			#cv2.waitKey(0)
 			
 #########################################################################################################
 # UpdateBBox - updates the initial dictionary with the newest bounding box information

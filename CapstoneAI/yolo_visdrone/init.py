@@ -91,40 +91,41 @@ class Init:
 				img_name = data.getData()
 				gps_calc = GPSCalc() # instantiate the GPSCalc class -> gps_coord.py
 				
-				lat = self.img_data[img_name]['Latitude']
-				lon = self.img_data[img_name]['Longitude']
-				elevation = gps_calc.getElevation(lat, lon)
-				altitude = self.img_data[img_name]['Altitude']
-				print("elevation")
-				print(str(elevation))
+				lat = self.img_data[img_name]['Latitude'] # latitude that was extracted in image_data.py
+				lon = self.img_data[img_name]['Longitude']# longitude that was extracted in image_data.py
+				elevation = gps_calc.getElevation(lat, lon) # get the elevation -> gps_coord.py
+				altitude = self.img_data[img_name]['Altitude'] # # altitude that was extracted in image_data.py
+				#print("elevation")
+				#print(str(elevation))
 				
-				img = PIL.Image.open(img_path)
+				img = PIL.Image.open(img_path) # open the image in pillow to dynamically get the dimensions
 				
-				print(img)
+				#print(img)
 				
-				img_w, img_h = img.size
+				img_w, img_h = img.size # image dimensions
 				
-				img.close()
-				print(img_w)
-				print(img_h)
-				gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude)
+				img.close() # close the image - not doing this will cause issues when trying to move the image from one folder to the other later on
+				#print(img_w)
+				#print(img_h)
+				gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude, img_path) # get the GPS value for the center of the image -> gps_coord.py
 				
-				print("gps")
-				print(gps)
+				#print("gps")
+				#print(gps)
 				
+				#append the dictionary with the corner gps coordinates
 				self.img_data[img_name]['top_right'] = gps[0]
 				self.img_data[img_name]['top_left'] = gps[1]
 				self.img_data[img_name]['bottom_right'] = gps[2]
 				self.img_data[img_name]['bottom_left'] = gps[3]
-				print(img_name)
-				img_new = self.access + '\\' + img_name
+				#print(img_name)
+				img_new = self.access + '\\' + img_name # new file path for the image since it has been accessed now
 				
 				print("moving " + img_name + " from unaccessed location to accessed location")
-				os.rename(img_path, img_new)
-				self.queue.append(img_new)
+				os.rename(img_path, img_new) # move this image to the accessed folder
+				self.queue.append(img_new) # put the image in queue to be accessed by the AI
 				self.mutex = 2
 				
-			else:
+			else: # if the image placed in the unaccessed folder has already been parsed, remove it
 				os.remove(img_path)
 		
 	
