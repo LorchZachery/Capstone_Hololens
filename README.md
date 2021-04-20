@@ -9,6 +9,7 @@ This program will run until interrupted by 'Ctrl-C', and will check CapstoneAI/U
 In order for everything to work properly, the image must have embedded GPS and altitude data (usually done automatically depending on the camera). This information is necessary, as it allows us to calculate the GPS location of every "bomb" that was detected by the AI (accurate to about 1x10^-6) and send those coordinates to the database to be used by the HoloLens.
 
 The AI and database updates will be done automatically after the program detects new images in the unaccessed folder - for testing purposes, there are two images, "loctets.jpeg" and "IMG_0055_3.tif" that have geolocation data but no vehicles in them, stored in CapstoneAI/geolocation_imgs. You can copy+paste these into the unaccessed folder and see how the images are parsed and what the geolocation data in the dictionary looks. 
+
 **Important** - You need to make sure, if using these images multiple times, that the Accessed folder is empty before re-running the program. If you never restarted the program, the images will simply be deleted and not used, but if you re-run, you will receive this error:
 "Traceback (most recent call last):
   File "main.py", line 115, in <module>
