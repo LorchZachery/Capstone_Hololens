@@ -1,4 +1,4 @@
-# CapstoneAI
+# CapstoneAI - JonathanNash21
 
 This folder holds all the important scripts for running the image parser, AI, and database update.
 
