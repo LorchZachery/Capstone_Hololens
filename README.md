@@ -9,7 +9,13 @@ This program will run until interrupted by 'Ctrl-C', and will check CapstoneAI/U
 In order for everything to work properly, the image must have embedded GPS and altitude data (usually done automatically depending on the camera). This information is necessary, as it allows us to calculate the GPS location of every "bomb" that was detected by the AI (accurate to about 1x10^-6) and send those coordinates to the database to be used by the HoloLens.
 
 The AI and database updates will be done automatically after the program detects new images in the unaccessed folder - for testing purposes, there are two images, "loctets.jpeg" and "IMG_0055_3.tif" that have geolocation data but no vehicles in them, stored in CapstoneAI/geolocation_imgs. You can copy+paste these into the unaccessed folder and see how the images are parsed and what the geolocation data in the dictionary looks. 
+<<<<<<< HEAD
 **Important** - You need to make sure, if using these images multiple times, that the Accessed folder is empty before re-running the program. If you never restarted the program, the images will simply be deleted and not used, but if you re-run, you will receive this error:
+=======
+
+**Important** - You need to make sure, if using these images multiple times, that the Accessed folder is empty before re-running the program. If you never restarted the program, the images will simply be deleted and not used, but if you re-run, you will receive this error:
+
+>>>>>>> d604ac949d6fefa2a0107fd46d2254b241f7377b
 "Traceback (most recent call last):
   File "main.py", line 115, in <module>
     asyncio.run(initial.look_for_image()) # look for images in the unaccessed folder -> init.py/look_for_image
@@ -20,6 +26,10 @@ The AI and database updates will be done automatically after the program detects
   File "D:\HololensIED\CapstoneAI\init.py", line 125, in look_for_image
     os.rename(img_path, img_new) # move this image to the accessed folder
 FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'D:\\HololensIED\\CapstoneAI\\Unaccessed_Images\\loctets.jpeg' -> 'D:\\HololensIED\\CapstoneAI\\Accessed_Images\\loctets.jpeg'"
+<<<<<<< HEAD
+=======
+
+>>>>>>> d604ac949d6fefa2a0107fd46d2254b241f7377b
 This is because the code moves images from the unaccessed folder to the accessed one, so if there are duplicates there and you have restarted the program, the implemented protections to prevent this error will not work. Good practice would be to empty the Accessed folder every time you perform a keyboard interrupt to stop the program - something simple to implement would be to do that automatically upon exiting the while loop (it will be an os library command, already imported) - this could be one of the first things you do if you feel it necessary to do so.
 
 # Suggestions for first-time interactions
@@ -31,4 +41,8 @@ The most difficult part of this would be finding data that is good enough to tra
 
 # CapstoneAI_OLD
 
+<<<<<<< HEAD
 This folder is what I was doing while reading "Deep Learning with Python" by Francois Chollet, this book was supplied by Major Wilson. It was helpful for understanding a lot of the general idea behind creating your own AI model from scratch, but ultimately did not get me very far. I kept it here for docmentation of previous work, but it is messy code and undocumented - look at it at your own risk. I gave the book back either to Major Wilson directly, or to LtCol Merritt/de Freitas for safekeeping. It is a good read, so if you have time and are building a model from scratch I would highly suggest taking a look at it.
+=======
+This folder is what I was doing while reading "Deep Learning with Python" by Francois Chollet, this book was supplied by Major Wilson. It was helpful for understanding a lot of the general idea behind creating your own AI model from scratch, but ultimately did not get me very far. I kept it here for docmentation of previous work, but it is messy code and undocumented - look at it at your own risk. I gave the book back either to Major Wilson directly, or to LtCol Merritt/de Freitas for safekeeping. It is a good read, so if you have time and are building a model from scratch I would highly suggest taking a look at it.
+>>>>>>> d604ac949d6fefa2a0107fd46d2254b241f7377b
