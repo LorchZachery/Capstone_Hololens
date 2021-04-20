@@ -1,2 +1,2 @@
-# Capstone_Hololens
- Working to connect AI to datbase. Datbase can give x,y relative cooridnates to halolens position
+# Image Processig
+This was theh code to process images from the alutim camera. It is not very useful anymore but if you are trying to stack muliti band images (rgb and thermel for example) this code will help
