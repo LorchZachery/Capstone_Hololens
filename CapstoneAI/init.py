@@ -46,7 +46,7 @@ class Init:
 		self.mutex = 1
 		
 		# testing purposes only, allows to show an image with vehicles the AI will detect with "coordinates" - image is a screenshot from Google earth and we plotted the 4 corners using Google Earth's coordinate system. This is still useful because we do not have any images with embedded coordinate data that contain cars (Only using HALO Group images, which have coordinate information but literally nothing else of worth)
-		if self.access_path:# and not self.access_path:
+		if not self.access_path:
 			#hardcoded image held in the test_images folder, taken from Google Earth and found GPS locations of all 4 corners, used for bounding box gps location calculation
 			name = "1.jpg"
 			

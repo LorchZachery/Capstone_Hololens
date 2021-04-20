@@ -119,7 +119,7 @@ if initial.access_path: # not doing the hardcoded test
 				#adj.AIRun() # testing purposes only
 				initial.queue.pop(0) # remove the image we just ran through the AI
 				initial.mutex = 1 # change locks
-			update = 1
+				update = 1 # make it so we don't try to update the database every time if there is nothing new to add
 			if update:
 				img_data = initial.get_img_data() # get the updated data
 				
@@ -137,7 +137,7 @@ if initial.access_path: # not doing the hardcoded test
 						if type(img_data[img][box]) is not dict or initial.img_data[img][box]["database_update"] == 1: # make sure we are accessing the correct data, and only that which was newly added
 							continue
 						# insert the appropriate information into the database	
-						insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon']) # sometimes commented out so we don't get runtime errors due to not being connected to db
+						#insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon']) # sometimes commented out so we don't get runtime errors due to not being connected to db
 						initial.img_data[img][box]["database_update"] = 1 # mark this data as having already been sent to the database
 						
 						#i += 1 # counter to limit entries to database, if desired

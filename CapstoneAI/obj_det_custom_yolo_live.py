@@ -1,7 +1,7 @@
 #########################################################################################################
 # Author - Dr. Steven Novotny, @stevenjnovotny
 # Contributer - C1C Jonathan Nash, @JonathanNash21
-# Last Updated - 17 Mar 2021
+# Last Updated - 20 Apr 2021
 # Brief - Takes in an image(s) or video stream and passes that information to an AI which will look for
 # 		  vehicles and encloses found vehicles in a unique bounding box. This information is then passed
 #   	  on to asynchronous.py, which will handle GPS calculations and data formatting to submit to the 
@@ -22,6 +22,7 @@ use custom yolo to evaluate video stream
 
 class Adjusted:
 #########################################################################################################
+# Class created by Jonathan Nash
 # init - initializethe Adjusted class
 # self.CONF_THRESH - confidence threshold for whether an AI will display a bounding box or not
 # self.NMS_THRESH - non maximum suppression threshold, helps prevent bounding boxes from overlapping
@@ -38,6 +39,7 @@ class Adjusted:
 		self.data_struct = init.img_data
 		
 #########################################################################################################
+# Author - Dr. Novotny, edited by Jonathan Nash
 # detect_annotate - runs the image through the AI and annotates all discovered vehicles in bounding boxes
 #                   and also sends the bounding box information to UpdateBBox
 # self - self value for class
@@ -108,6 +110,7 @@ class Adjusted:
 			cv2.putText(img, "Nothing found", (10, 50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 3, (0, 0,255), 2)
 
 #########################################################################################################
+# Author - Dr. Novotny, edited by Jonathan Nash
 # AIRun - sets up all the necessary information for the AI to be able to parse through an image
 # self - self reference for class structure
 # filename - allows a specific image to be passed in when the function is called, allows for multiple images
@@ -199,6 +202,7 @@ class Adjusted:
 			#cv2.waitKey(0)
 			
 #########################################################################################################
+# Author - Jonathan Nash
 # UpdateBBox - updates the initial dictionary with the newest bounding box information
 # B_Box - the newest bounding box information to be added to the dictionary
 #########################################################################################################
