@@ -39,14 +39,14 @@ class Init:
 	def __init__(self):
 		self.b_boxes = b_boxes #bounding box information from the AI
 		self.img_data = img_data
-		self.unaccess = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Unaccessed_Images'
-		self.access = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\Accessed_Images'
+		self.unaccess = 'D:\HololensIED\CapstoneAI\\Unaccessed_Images'
+		self.access = 'D:\HololensIED\CapstoneAI\\Accessed_Images'
 		self.access_path = True#False #make false when you want to run the spoofed image
 		self.queue = []
 		self.mutex = 1
 		
 		# testing purposes only, allows to show an image with vehicles the AI will detect with "coordinates" - image is a screenshot from Google earth and we plotted the 4 corners using Google Earth's coordinate system. This is still useful because we do not have any images with embedded coordinate data that contain cars (Only using HALO Group images, which have coordinate information but literally nothing else of worth)
-		if len(os.listdir(self.unaccess)) == 0 and not self.access_path:
+		if self.access_path:# and not self.access_path:
 			#hardcoded image held in the test_images folder, taken from Google Earth and found GPS locations of all 4 corners, used for bounding box gps location calculation
 			name = "1.jpg"
 			
@@ -62,6 +62,7 @@ class Init:
 				'img_h' : 635,
 				'img_w' : 800,
 				}
+			self.queue.append("D:\HololensIED\CapstoneAI\test_images\\1.jpg")
 				#39.0082142, -104.8858718
 		else:
 			self.access_path = True #used in main.py

@@ -1,138 +1,152 @@
-import os, shutil
-from keras import layers, models
-from keras.preprocessing.image import ImageDataGenerator
+#########################################################################################################
+# Author - C1C Jonathan Nash, @JonathanNash21
+# Last Updated - 17 Mar 2021
+# Brief - Main function that will use a given folder of images and send them one at a time to the AI to 
+# 		  parse through. Also runs database functions once all the images have been processed (can be 
+#  		  updated to run asynchronously when each new "bomb" has been found).
+#########################################################################################################
+from obj_det_custom_yolo_live import Adjusted
+from init import Init
+from asynchronous import Catch
+import asyncio
+import os 
+import requests
+import shutil
+import json
+import sys
+import time
+from image_data import ImageData
 
-original_train_dir = 'F:\CapstoneAI Images\cars_train'
-original_test_dir = 'F:\CapstoneAI Images\cars_test'
+# current database location, ran by C1C Zach Lorch (@LorchZachery)
+dfcsURL = 'http://10.10.10.40/capstone/scripts/'
+url = dfcsURL + 'query.php'
 
-base_dir = 'F:\CapstoneAI big'
-#os.mkdir(base_dir)
+#initialize main dictionary, important variables, etc. -> init.py
+initial = Init()
 
-train_dir = os.path.join(base_dir, 'train')
-#os.mkdir(train_dir)
-val_dir = os.path.join(base_dir, 'validation')
-#os.mkdir(val_dir)
-test_dir = os.path.join(base_dir, 'test')
-#os.mkdir(test_dir)
+def query_db(statement, command, verbose=False):
+    data = {'query' : statement, 'type' : command}
+    #try:
+    r = requests.post(url, data = data)
+    #except:
+    #    url = urlNetwork + 'scripts/query.php'
+    #    r = requests.post(url, data = data)
+    b = r.content.decode()
+    if command == 'SELECT':
+        load = json.loads(b)
+        final = json.dumps(load, indent =4)
+        if verbose:
+            print(final)
+        return load
+    else:
+        if verbose:
+            print(b)
+        return b
 
-model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape = (150, 150, 3)))
+# insert the lat and lon of a found bomb to the database
+def insert_latlon(lat, lon, last_id=False):
+    new = False
+    if last_id is False:
+        new = True
+    #print("hit me")
+    if new:
+        select = 'SELECT ID from bombs' 
+        json_file = query_db(select, 'SELECT')
+        last_id = -1
+        for i in range(0, len(json_file)):
+            last_id = json_file[i]["ID"]
+        last_id = str(int(last_id) + 1)
+        insert = 'INSERT INTO bombs (ID, lat, lon) VALUES (' + last_id + ', '+ str(lat) +',' + str(lon) + ')'
+    else:
+        insert = 'UPDATE bombs SET lat = ' + str(lat) + ', lon= '+ str(lon) + 'WHERE ID = ' + str(last_id)
+    
+    result = query_db(insert, 'EDIT')
+    if not result:
+        print("query failed")
+    elif new:
+        print('new bomb created with ID: ' + str(last_id) + ' with lat: ' + str(lat) + ' lon: ' + str(lon))
+    else:
+        print('bomb ' + str(last_id) + ' was updated with lat: ' + str(lat) + ' lon: ' + str(lon))
+'''
+def check_db(table):
+    select = 'SELECT * from ' + table
+    query_db(select, 'SELECT', True)
 
-model.add(layers.MaxPooling2D((2,2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2,2)))
-model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2,2)))
-model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2,2)))
-model.add(layers.Flatten())
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(512, activation='relu'))
-model.add(layers.Dense(1, activation='sigmoid'))
+def delete(id):
+    delete = 'DELETE FROM bombs WHERE ID=' + str(id)
+    query_db(delete,'EDIT')
 
-model. summary()
+def updateXY(curr_lat, curr_lon):
+    url = dfcsURL + 'x_y.php'
 
+    data = {'lat' : curr_lat , 'lon' : curr_lon }
+    try:
+        r = requests.post(url, data = data)
+    except:
+        r = requests.post(url, data = data)
 
-from keras import optimizers
+    b = r.content.decode()
+    print(b)
 
-model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1e-4),metrics=['acc']) 
-
-trainDatagen = ImageDataGenerator(rescale=1./255,
-						rotation_range=40,
-						width_shift_range=0.2,
-						height_shift_range=0.2,
-						shear_range=0.2,
-						zoom_range=0.2,
-						horizontal_flip=True)
-testDatagen = ImageDataGenerator(rescale=1./255)
-
-trainGenerator = trainDatagen.flow_from_directory(
-												train_dir,
-												target_size=(150, 150),
-												batch_size=100,
-												class_mode='binary')
-
-valGenerator = testDatagen.flow_from_directory(
-												val_dir,
-												target_size=(150,150),
-												batch_size=100,
-												class_mode='binary')
-
-for data_batch, labels_batch in trainGenerator:
-	print('data batch shape:', data_batch.shape)
-	print('labels batch shape:', labels_batch.shape)
-	break
-	
-history = model.fit_generator(
-							trainGenerator,
-							steps_per_epoch=61,
-							epochs=100,
-							validation_data=valGenerator,
-							validation_steps=21)
-							
-model.save('big_car_better.h5')
-
-import matplotlib.pyplot as plt
-
-acc = history.history['acc']
-val_acc = history.history['val_acc']
-loss = history.history['loss']
-val_loss = history.history['val_loss']
-
-epochs = range(1, len(acc) + 1)
-
-plt.plot(epochs, acc, 'bo', label='Training acc')
-plt.plot(epochs, val_acc, 'b', label='Validation acc')
-plt.title('Training and validation accuracy')
-plt.legend()
-
-plt.figure()
-
-plt.plot(epochs, loss, 'bo', label='Training loss')
-plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.title('Training and validation loss')
-plt.legend()
-
-plt.show()
-"""
-
-################################## Data augmentation
-
-datagen = ImageDataGenerator(
-						rotation_range=40,
-						width_shift_range=0.2,
-						height_shift_range=0.2,
-						shear_range=0.2,
-						zoom_range=0.2,
-						horizontal_flip=True,
-						fill_mode='nearest')
-from keras.preprocessing import image
-
-for fname in os.listdir(train_dir):
-	sub_dir = os.path.join(train_dir, fname) 
-
-#print(sub_dir)
-
-fnames = [os.path.join(sub_dir, fname) for fname in os.listdir(sub_dir)]
-
-#print(fnames)
-img_path = fnames[3]
-
-img = image.load_img(img_path, target_size=(150, 150))
-
-x = image.img_to_array(img)
-
-x = x.reshape((1,) + x.shape)
-i = 0
-
-for batch in datagen.flow(x, batch_size=1):
-	plt.figure(i)
-	imgplot = plt.imshow(image.array_to_img(batch[0]))
-	i += 1
-	if i % 4 == 0:
-		print('Hit break, i = ', i)
-		break
-plt.show()
+#
+#updateXY(0,0)
+#insert_latlon(39.00863265991211,-104.88196563720703)
+#updateXY(39.008431, -104.883484)
 
 
-"""
+def check():
+    statement = 'SELECT * from currentfiles'
+    query_db(statement, 'SELECT', True)
+
+'''
+# the file location for image files I want to run through the AI
+#imgset = 'D:\HololensIED\CapstoneAI\yolo_visdrone\\test_images'
+
+# print(os.listdir(imgset))
+# initialize the Adjusted class -> obj_det_custom_yolo_live.py
+adj = Adjusted()
+
+if initial.access_path: # not doing the hardcoded test
+	try: # allows for a keyboard interrupt
+		while(True): # continuously run this code until a keyboard interrupt occurs
+			update = 0 # check to see if the AI ran
+			if initial.mutex == 1: # check to see if init can access the files
+				#print("in mutex 1")
+				asyncio.run(initial.look_for_image()) # look for images in the unaccessed folder -> init.py/look_for_image
+			if len(initial.queue) > 0:# and initial.mutex == 2: # if there are images to run and AI can access the files
+				#print("in mutex 2")
+				adj.AIRun(initial.queue[0]) # run the AI on the first image in the queue -> obj_det_custom_yolo_live.py
+				#adj.AIRun() # testing purposes only
+				initial.queue.pop(0) # remove the image we just ran through the AI
+				initial.mutex = 1 # change locks
+			update = 1
+			if update:
+				img_data = initial.get_img_data() # get the updated data
+				
+				for img in img_data: # for each image in the dictionary, send any new data to the database
+					# print(img)
+					# the second dictionary has entries separated by bounding box (x, y) coordinates (coordinates in reference to image size, not GPS)
+					for box in img_data[img]: # for each bounding box in the image
+						#print("box")
+						# limit entries sent to database to 5, for testing purposes only (everything will work without this, this is only used for proof of concept)
+						#if i > 5:
+						#	break
+						# there is other information stored in the initial dictionary that is not the second dictionary, we want to skip over this
+						#print(type(init.img_data[img][box]))
+						#print(init.img_data[img][box])
+						if type(img_data[img][box]) is not dict or initial.img_data[img][box]["database_update"] == 1: # make sure we are accessing the correct data, and only that which was newly added
+							continue
+						# insert the appropriate information into the database	
+						insert_latlon(initial.img_data[img][box]['lat'], initial.img_data[img][box]['lon']) # sometimes commented out so we don't get runtime errors due to not being connected to db
+						initial.img_data[img][box]["database_update"] = 1 # mark this data as having already been sent to the database
+						
+						#i += 1 # counter to limit entries to database, if desired
+						#print("lat:" + str(init.img_data[img][box]['lat']) + ", lon: " + str(init.img_data[img][box]['lon']))
+			time.sleep(5) # sleep for 5 seconds before checking everything again, general use should be longer
+	except KeyboardInterrupt: # if ctrl+c is hit, stop the program
+			print("Exiting while loop")
+			pass
+else: # testing only, nothing in unaccessed folder
+	#adj.AIRun("D:\HololensIED\CapstoneAI\loctets.jpeg") #for testing the whole shindig - should run this using the unaccessed folder now
+	adj.AIRun() # will run AIRun with the filename == None, which just goes to a default image value
+

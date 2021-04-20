@@ -88,7 +88,7 @@ async def json():
 	img_data[name][(box_x, box_y)]['lat'] = gps_lat
 	#assign lon value to this dictionary entry
 	img_data[name][(box_x, box_y)]['lon'] = gps_lon
-
+	img_data[name][(box_x, box_y)]["database_update"] = 0
 
 	#print("init img data 2")
 	print(init.img_data)
