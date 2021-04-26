@@ -64,9 +64,9 @@ class Init:
 				}
 			self.queue.append("D:\HololensIED\CapstoneAI\test_images\\1.jpg")
 				#39.0082142, -104.8858718
-		else:
-			self.access_path = True #used in main.py
-			print("There are unaccessed images")
+		#  else:
+			#self.access_path = True #used in main.py
+			#print("There are unaccessed images")
 
 #########################################################################################################
 # look_for_image - looks through the unaccessed directory and takes any images in there and parses out the necessary information for calculating the GPS coordinates of each detected bomb. If an image has already been accessed an is re-added to the unaccessed directory, the image will be tossed out (this requires the program to have been running when the image was initially parsed, otherwise you will get an os error)
@@ -120,13 +120,18 @@ class Init:
 				self.img_data[img_name]['bottom_left'] = gps[3]
 				#print(img_name)
 				img_new = self.access + '\\' + img_name # new file path for the image since it has been accessed now
-				
-				print("moving " + img_name + " from unaccessed location to accessed location")
-				os.rename(img_path, img_new) # move this image to the accessed folder
-				self.queue.append(img_new) # put the image in queue to be accessed by the AI
-				self.mutex = 2
+				try:
+					print("moving " + img_name + " from unaccessed location to accessed location")
+					os.rename(img_path, img_new) # move this image to the accessed folder
+					self.queue.append(img_new) # put the image in queue to be accessed by the AI
+					self.mutex = 2
+				except FileExistsError:
+					print("Error, file " + img_name + " already exists in accessed folder, deleting file instead.")
+					os.remove(img_path)
+					pass
 				
 			else: # if the image placed in the unaccessed folder has already been parsed, remove it
+				print(img + " has already been accessed. Deleting from unaccessed directory.")
 				os.remove(img_path)
 		
 	
