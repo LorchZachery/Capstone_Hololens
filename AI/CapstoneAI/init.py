@@ -91,35 +91,39 @@ class Init:
 				#print(data)
 				img_name = data.getData()
 				gps_calc = GPSCalc() # instantiate the GPSCalc class -> gps_coord.py
-				
-				lat = self.img_data[img_name]['Latitude'] # latitude that was extracted in image_data.py
-				lon = self.img_data[img_name]['Longitude']# longitude that was extracted in image_data.py
-				elevation = gps_calc.getElevation(lat, lon) # get the elevation -> gps_coord.py
-				altitude = self.img_data[img_name]['Altitude'] # # altitude that was extracted in image_data.py
-				#print("elevation")
-				#print(str(elevation))
-				
-				img = PIL.Image.open(img_path) # open the image in pillow to dynamically get the dimensions
-				
-				#print(img)
-				
-				img_w, img_h = img.size # image dimensions
-				
-				img.close() # close the image - not doing this will cause issues when trying to move the image from one folder to the other later on
-				#print(img_w)
-				#print(img_h)
-				gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude, img_path) # get the GPS value for the center of the image -> gps_coord.py
-				
-				#print("gps")
-				#print(gps)
-				
-				#append the dictionary with the corner gps coordinates
-				self.img_data[img_name]['top_right'] = gps[0]
-				self.img_data[img_name]['top_left'] = gps[1]
-				self.img_data[img_name]['bottom_right'] = gps[2]
-				self.img_data[img_name]['bottom_left'] = gps[3]
-				#print(img_name)
-				img_new = self.access + '\\' + img_name # new file path for the image since it has been accessed now
+				try: # prevent images without proper metadata from being parsed
+					lat = self.img_data[img_name]['Latitude'] # latitude that was extracted in image_data.py
+					lon = self.img_data[img_name]['Longitude']# longitude that was extracted in image_data.py
+					elevation = gps_calc.getElevation(lat, lon) # get the elevation -> gps_coord.py
+					altitude = self.img_data[img_name]['Altitude'] # # altitude that was extracted in image_data.py
+					#print("elevation")
+					#print(str(elevation))
+
+					img = PIL.Image.open(img_path) # open the image in pillow to dynamically get the dimensions
+
+					#print(img)
+
+					img_w, img_h = img.size # image dimensions
+
+					img.close() # close the image - not doing this will cause issues when trying to move the image from one folder to the other later on
+					#print(img_w)
+					#print(img_h)
+					gps = gps_calc.getGPS(img_w, img_h, elevation, lat, lon, altitude, img_path) # get the GPS value for the center of the image -> gps_coord.py
+
+					#print("gps")
+					#print(gps)
+
+					#append the dictionary with the corner gps coordinates
+					self.img_data[img_name]['top_right'] = gps[0]
+					self.img_data[img_name]['top_left'] = gps[1]
+					self.img_data[img_name]['bottom_right'] = gps[2]
+					self.img_data[img_name]['bottom_left'] = gps[3]
+					#print(img_name)
+					img_new = self.access + '\\' + img_name # new file path for the image since it has been accessed now
+				except KeyError:
+					print("Warning, " + img_name + " does not have appropriate metadata embedded. This image will not be parsed and will be removed from the unaccessed folder.")
+					os.remove(img_path)
+					return
 				try: # prevent issues with stopping the program, restarting and then placing an image in the unaccessed folder that also exists in the accessed folder
 					print("moving " + img_name + " from unaccessed location to accessed location")
 					os.rename(img_path, img_new) # move this image to the accessed folder
