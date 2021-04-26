@@ -120,7 +120,7 @@ class Init:
 				self.img_data[img_name]['bottom_left'] = gps[3]
 				#print(img_name)
 				img_new = self.access + '\\' + img_name # new file path for the image since it has been accessed now
-				try:
+				try: # prevent issues with stopping the program, restarting and then placing an image in the unaccessed folder that also exists in the accessed folder
 					print("moving " + img_name + " from unaccessed location to accessed location")
 					os.rename(img_path, img_new) # move this image to the accessed folder
 					self.queue.append(img_new) # put the image in queue to be accessed by the AI
