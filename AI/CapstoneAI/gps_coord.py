@@ -12,10 +12,10 @@ import os
 class GPSCalc:
 #########################################################################################################
 # init - initializes the GPSCalc class
-# self.r_earth - radius of the earth
+# self.r_earth - radius of the earth in km
 #########################################################################################################
 	def __init__(self):
-		self.r_earth = 6378
+		self.r_earth = 6378.137
 		
 #########################################################################################################
 # truncate - truncates a number to the specified number of decimals
