@@ -33,6 +33,7 @@ The AI and database updates will be done automatically after the program detects
 FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'D:\\HololensIED\\CapstoneAI\\Unaccessed_Images\\loctets.jpeg' -> 'D:\\HololensIED\\CapstoneAI\\Accessed_Images\\loctets.jpeg'"
 
 This is because the code moves images from the unaccessed folder to the accessed one, so if there are duplicates there and you have restarted the program, the implemented protections to prevent this error will not work. Good practice would be to empty the Accessed folder every time you perform a keyboard interrupt to stop the program - something simple to implement would be to do that automatically upon exiting the while loop (it will be an os library command, already imported) - this could be one of the first things you do if you feel it necessary to do so.
+**This should be fixed now, but left just in case it's experienced somewhere else**
 
 # Suggestions for first-time interactions
 
@@ -40,6 +41,8 @@ First, run the program using one of the images in geolocation_imgs, let it parse
 
 Once you have a good understanding of what this is doing, your efforts would be best be suited finding some way to train an AI on IED data, or finding one that is already made (very difficult, we looked early on in the semester and couldn't find anything, although our search was somewhat limited).
 The most difficult part of this would be finding data that is good enough to train on, as well as having enough of that data. 
+
+After you have done this, finding a way to extract the yaw from an image or to be able to calculate it would be invaluable. The yaw calculation is done in gps_coord.py, line 65. The commented out ```img.dls_pose()``` was done with micasense code, so it would be beneficial to look for specific code related to what camera you end up using.
 
 # CapstoneAI_OLD
 
